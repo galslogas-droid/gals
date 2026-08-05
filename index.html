@@ -425,7 +425,18 @@ let chartInstances=[],chartTrend=null,chartKomposisi=null,chartForecast=null,cur
 /* ===================== UTIL ===================== */
 function formatDateLocal(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function getToday(){return formatDateLocal(new Date());}
-function parseDate(str){if(!str)return null;const t=String(str).split('T')[0];const p=t.split('-');if(p.length===3)return new Date(+p[0],+p[1]-1,+p[2]);return null;}
+function parseDate(str){
+  if(!str)return null;
+  if(str instanceof Date)return isNaN(str.getTime())?null:new Date(str.getFullYear(),str.getMonth(),str.getDate());
+  const s=String(str).trim();
+  let m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m)return new Date(+m[1],+m[2]-1,+m[3]);
+  m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(m)return new Date(+m[3],+m[2]-1,+m[1]);
+  const d=new Date(s);
+  return isNaN(d.getTime())?null:new Date(d.getFullYear(),d.getMonth(),d.getDate());
+}
+function tglStr(r){const dt=parseDate(r[COL.tanggal]);return dt?formatDateLocal(dt):'';}
 function toast(m){const el=document.getElementById('toast');if(!el)return;el.innerText=m;el.style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.style.display='none';},2200);}
 function rupiah(n){return'Rp '+Math.round(Number(n||0)).toLocaleString('id-ID');}
 function toRupiah(v){return v&&Number(v)>0?'Rp '+Number(v).toLocaleString('id-ID'):'';}
@@ -505,7 +516,7 @@ function setFilter(j,btn){
   }
   updateDashboard();renderTable();if(currentPage==='kasAdminPage')renderKasAdmin();
 }
-function filterData(){const f=document._filter;if(!f)return allData;return allData.filter(d=>{const t=String(d[COL.tanggal]||'').split('T')[0];return t>=f.mulai&&t<=f.akhir;});}
+function filterData(){const f=document._filter;if(!f)return allData;return allData.filter(d=>{const t=tglStr(d);return t>=f.mulai&&t<=f.akhir;});}
 
 /* ===================== NAV ===================== */
 function buildBottomNav(){
@@ -555,7 +566,7 @@ function updateJatahDisplay(g,gl){POS.forEach(p=>{const j=p.jatahFn(g,gl);const 
 
 function fillForm(r){
   editId=r[COL.id];const setVal=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val;};
-  setVal('tanggal',(r[COL.tanggal]||'').split('T')[0]);
+  setVal('tanggal',tglStr(r));
   setVal('gas22',r[COL.gas22]||'');setVal('gas23',r[COL.gas23]||'');setVal('gasPink',r[COL.gasPink]||'');
   setVal('galon3k',r[COL.galon3k]||'');setVal('galon4k',r[COL.galon4k]||'');setVal('galon5k',r[COL.galon5k]||'');
   setVal('pemasukanLain',toRupiah(r[COL.pemasukanLain]));setVal('ketPemasukanLain',r[COL.ketPemasukanLain]||'');
@@ -574,7 +585,7 @@ function fillForm(r){
   if(Number(r[COL.pemasukanLain]||0)>0)document.getElementById('accPemasukan').classList.add('open');
 }
 function cekDataHariIni(){const today=getToday();const found=allData.find(r=>{const dt=parseDate(r[COL.tanggal]);return dt&&formatDateLocal(dt)===today;});if(found)fillForm(found);else resetForm();}
-function isiDropdownTanggal(){const dd=document.getElementById('pilihTanggal');if(!dd)return;dd.innerHTML='<option value="">-- Pilih --</option>';[...allData].reverse().forEach(r=>{const idx=allData.indexOf(r);const o=document.createElement('option');o.value=idx;o.textContent=(r[COL.tanggal]||'').split('T')[0];dd.appendChild(o);});}
+function isiDropdownTanggal(){const dd=document.getElementById('pilihTanggal');if(!dd)return;dd.innerHTML='<option value="">-- Pilih --</option>';[...allData].reverse().forEach(r=>{const idx=allData.indexOf(r);const o=document.createElement('option');o.value=idx;o.textContent=tglStr(r);dd.appendChild(o);});}
 function loadByTanggal(){const idx=document.getElementById('pilihTanggal')?.value;if(idx===''||idx===undefined){cekDataHariIni();return;}fillForm(allData[idx]);}
 function editFromRekap(id){const r=allData.find(d=>d[COL.id]==id);if(!r)return;fillForm(r);showMainPage('dashboardPage');}
 
@@ -585,7 +596,7 @@ async function hapusData(id){
   try{const r=await(await fetch(API_URL,{method:'POST',body:d})).json();toast(r.message||'✅ Dihapus');resetForm();await loadAllData();}catch(e){toast('❌ Gagal hapus');}
 }
 function resetForm(){
-  editId=null;const tgl=document.getElementById('tanggal');if(tgl)tgl.valueAsDate=new Date();
+  editId=null;const tgl=document.getElementById('tanggal');if(tgl)tgl.value=getToday();
   ['gas22','gas23','gasPink','galon3k','galon4k','galon5k','pemasukanLain','ketPemasukanLain','realKulakan','catKulakan','realZakat','catZakat','realSetoran','catSetoran','pengeluaranLain','catPengeluaranLain','shodaqoh'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('opContainer').innerHTML=buildOpRows(null);bindOpEvents();updatePreview();
   document.getElementById('infoEdit').style.display='none';document.getElementById('btnHapusForm').style.display='none';
@@ -654,7 +665,7 @@ function aggregatePeriod(data){
 }
 function updateDashboard(){
   const filtered=filterData();
-  const today=getToday();const todayRow=allData.find(r=>String(r[COL.tanggal]||'').split('T')[0]===today);
+  const today=getToday();const todayRow=allData.find(r=>tglStr(r)===today);
   document.getElementById('floatingTotalVal').textContent=rupiah(todayRow?Number(todayRow[COL.totalOmzet]||0):0);
   renderTopInfo(filtered);
   renderStokMini();
@@ -739,7 +750,7 @@ function renderTable(){
   document.getElementById('totalData').innerText=filtered.length;
   if(!filtered.length){tb.innerHTML='<tr><td colspan="10"><div style="text-align:center;padding:40px;">📭 Belum ada data</div></td></tr>';return;}
   let html='';[...filtered].reverse().forEach(r=>{
-    html+=`<tr><td><b>${(r[COL.tanggal]||'').split('T')[0]}</b></td><td>22k:${r[COL.gas22]||0} 23k:${r[COL.gas23]||0}<br>Pink:${r[COL.gasPink]||0}</td><td>3k:${r[COL.galon3k]||0} 4k:${r[COL.galon4k]||0}<br>5k:${r[COL.galon5k]||0}</td><td>${rupiah(r[COL.totalOmzet])}</td><td>${rupiah(r[COL.jatahKulakan])}</td><td>${rupiah(r[COL.jatahOps])}</td><td>${rupiah(r[COL.jatahZakat])}</td><td>${rupiah(r[COL.jatahSetoran])}</td><td><span class="pill ${Number(r[COL.labaBersih])>=0?'pill-up':'pill-down'}">${rupiah(r[COL.labaBersih])}</span></td><td><span class="btn-edit" onclick="editFromRekap('${r[COL.id]}')">✏️</span><span class="btn-delete" onclick="hapusData('${r[COL.id]}')">🗑️</span></td></tr>`;
+    html+=`<tr><td><b>${tglStr(r)}</b></td><td>22k:${r[COL.gas22]||0} 23k:${r[COL.gas23]||0}<br>Pink:${r[COL.gasPink]||0}</td><td>3k:${r[COL.galon3k]||0} 4k:${r[COL.galon4k]||0}<br>5k:${r[COL.galon5k]||0}</td><td>${rupiah(r[COL.totalOmzet])}</td><td>${rupiah(r[COL.jatahKulakan])}</td><td>${rupiah(r[COL.jatahOps])}</td><td>${rupiah(r[COL.jatahZakat])}</td><td>${rupiah(r[COL.jatahSetoran])}</td><td><span class="pill ${Number(r[COL.labaBersih])>=0?'pill-up':'pill-down'}">${rupiah(r[COL.labaBersih])}</span></td><td><span class="btn-edit" onclick="editFromRekap('${r[COL.id]}')">✏️</span><span class="btn-delete" onclick="hapusData('${r[COL.id]}')">🗑️</span></td></tr>`;
   });
   tb.innerHTML=html;
 }
@@ -753,7 +764,7 @@ async function exportPDF(){
 function renderSetoran(){
   const tb=document.getElementById('setoranBody');if(!tb)return;
   let total=0,html='';
-  [...allData].reverse().forEach(r=>{const tgl=(r[COL.tanggal]||'').split('T')[0],jumlah=Number(r[COL.realSetoran]||0),cat=r[COL.catSetoran]||'';if(jumlah>0){total+=jumlah;html+=`<tr><td>${tgl}</td><td>${rupiah(jumlah)}</td><td>${esc(cat)}</td></tr>`;}});
+  [...allData].reverse().forEach(r=>{const tgl=tglStr(r),jumlah=Number(r[COL.realSetoran]||0),cat=r[COL.catSetoran]||'';if(jumlah>0){total+=jumlah;html+=`<tr><td>${tgl}</td><td>${rupiah(jumlah)}</td><td>${esc(cat)}</td></tr>`;}});
   document.getElementById('totalSetoranVal').textContent=rupiah(total);
   tb.innerHTML=html||'<tr><td colspan="3"><div style="text-align:center;padding:40px;">📭 Belum ada setoran</div></td></tr>';
 }
@@ -779,7 +790,7 @@ async function inputStok(){
   try{const r=await(await fetch(API_URL,{method:'POST',body:d})).json();toast(r.message||'OK');if(r.success!==false){['gasStdMasuk','gasPinkMasuk','ketStok'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});await loadAllData();}}catch(e){toast('❌ Gagal simpan stok');}
 }
 function renderStokPage(){
-  const tgl=document.getElementById('tglStok');if(tgl&&!tgl.value)tgl.valueAsDate=new Date();
+  const tgl=document.getElementById('tglStok');if(tgl&&!tgl.value)tgl.value=getToday();
   const grid=document.getElementById('stokPrediksiGrid');if(!grid)return;
   const defs=[['GasStd','🔥 Gas 22K/23K'],['GasPink','💗 Gas Pink']];
   grid.innerHTML=defs.map(([sku,label])=>{
@@ -796,14 +807,14 @@ async function renderGrafik(){
   if(!window.Chart){cont0.innerHTML='<div class="chart-card">⏳ Memuat grafik...</div>';await loadChartJs();}
   if(currentPage!=='grafikPage')return;
   destroyCharts();
-  const filtered=[...filterData()].sort((a,b)=>String(a[COL.tanggal]).localeCompare(String(b[COL.tanggal])));
+  const filtered=[...filterData()].sort((a,b)=>tglStr(a).localeCompare(tglStr(b)));
   const cont=document.getElementById('chartsContainer');
   cont.innerHTML=`
     <div class="chart-card large"><div class="chart-head"><h3>📈 Omzet Harian</h3></div><div class="chart-wrap"><canvas id="gOmzet"></canvas></div></div>
     <div class="chart-card"><div class="chart-head"><h3>🔥 Gas vs 💧 Galon Terjual</h3></div><div class="chart-wrap"><canvas id="gUnit"></canvas></div></div>
     <div class="chart-card"><div class="chart-head"><h3>📊 Laba Bersih Harian</h3></div><div class="chart-wrap"><canvas id="gLaba"></canvas></div></div>
     <div class="chart-card large"><div class="chart-head"><h3>🏦 Jatah vs Real per Pos</h3></div><div class="chart-wrap"><canvas id="gPos"></canvas></div></div>`;
-  const labels=filtered.map(r=>String(r[COL.tanggal]).split('T')[0].slice(5));
+  const labels=filtered.map(r=>tglStr(r).slice(5));
   chartInstances.push(new Chart(document.getElementById('gOmzet'),{type:'line',data:{labels,datasets:[{label:'Omzet',data:filtered.map(r=>Number(r[COL.totalOmzet]||0)),borderColor:'#0f766e',backgroundColor:'rgba(20,184,166,.15)',fill:true,tension:.35}]},options:{responsive:true,maintainAspectRatio:false}}));
   chartInstances.push(new Chart(document.getElementById('gUnit'),{type:'bar',data:{labels,datasets:[{label:'Gas',data:filtered.map(r=>Number(r[COL.gas22]||0)+Number(r[COL.gas23]||0)+Number(r[COL.gasPink]||0)),backgroundColor:'#0ea5e9'},{label:'Galon',data:filtered.map(r=>Number(r[COL.galon3k]||0)+Number(r[COL.galon4k]||0)+Number(r[COL.galon5k]||0)),backgroundColor:'#14b8a6'}]},options:{responsive:true,maintainAspectRatio:false}}));
   chartInstances.push(new Chart(document.getElementById('gLaba'),{type:'bar',data:{labels,datasets:[{label:'Laba',data:filtered.map(r=>Number(r[COL.labaBersih]||0)),backgroundColor:filtered.map(r=>Number(r[COL.labaBersih]||0)>=0?'#16a34a':'#dc2626')}]},options:{responsive:true,maintainAspectRatio:false}}));
@@ -819,11 +830,11 @@ function setAnalisisFilter(j,btn){
   currentAnalisisFilter=j;renderAnalisis();
 }
 function getAnalisisData(){
-  if(currentAnalisisFilter==='semua')return [...allData].sort((a,b)=>String(a[COL.tanggal]).localeCompare(String(b[COL.tanggal])));
+  if(currentAnalisisFilter==='semua')return [...allData].sort((a,b)=>tglStr(a).localeCompare(tglStr(b)));
   const now=new Date();const batas=new Date(now);
   if(currentAnalisisFilter==='minggu')batas.setDate(now.getDate()-6);else batas.setDate(now.getDate()-29);
   batas.setHours(0,0,0,0);
-  return allData.filter(r=>{const dt=parseDate(r[COL.tanggal]);return dt&&dt>=batas;}).sort((a,b)=>String(a[COL.tanggal]).localeCompare(String(b[COL.tanggal])));
+  return allData.filter(r=>{const dt=parseDate(r[COL.tanggal]);return dt&&dt>=batas;}).sort((a,b)=>tglStr(a).localeCompare(tglStr(b)));
 }
 async function renderAnalisis(){
   const data=getAnalisisData();const a=aggregatePeriod(data);
@@ -864,7 +875,7 @@ async function renderAnalisis(){
   if(!window.Chart)await loadChartJs();
   if(currentPage!=='analisisPage')return;
   if(chartTrend)chartTrend.destroy();if(chartKomposisi)chartKomposisi.destroy();if(chartForecast)chartForecast.destroy();
-  const labels=data.map(r=>String(r[COL.tanggal]).split('T')[0].slice(5));
+  const labels=data.map(r=>tglStr(r).slice(5));
   chartTrend=new Chart(document.getElementById('cTrend'),{type:'line',data:{labels,datasets:[{label:'Omzet',data:data.map(r=>Number(r[COL.totalOmzet]||0)),borderColor:'#38bdf8',backgroundColor:'rgba(56,189,248,.15)',fill:true,tension:.35}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
   chartKomposisi=new Chart(document.getElementById('cKomposisi'),{type:'doughnut',data:{labels:['Omzet Gas','Omzet Galon'],datasets:[{data:[a.omzetGas,a.omzetGalon],backgroundColor:['#0ea5e9','#14b8a6']}]},options:{responsive:true,maintainAspectRatio:false}});
 
@@ -889,7 +900,7 @@ function toggleDarkMode(){
 
 /* ===================== INIT ===================== */
 window.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('tanggal').valueAsDate=new Date();
+  document.getElementById('tanggal').value=getToday();
   document.getElementById('opContainer').innerHTML=buildOpRows(null);
   bindOpEvents();updatePreview();
   document.getElementById('bottomNav').innerHTML=buildBottomNav();
