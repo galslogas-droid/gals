@@ -7,6 +7,10 @@
 <meta name="theme-color" content="#0f766e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 /* Ringan kanggo HP spek cendhek: tanpa backdrop-filter/blur, tanpa animasi ambient,
@@ -243,7 +247,10 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
 <button class="dark-toggle" onclick="toggleDarkMode()" id="darkBtn">🌙</button>
 <header class="header">
   <div class="header-content">
-    <div><h1>✨ GALS NextGen</h1><p class="hero-greeting" id="heroGreeting">Selamat datang! Memuat data...</p></div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="icon-192.png" alt="" style="width:38px;height:38px;border-radius:11px;flex:none;box-shadow:0 2px 8px rgba(0,0,0,.25);">
+      <div><h1>GALS NextGen</h1><p class="hero-greeting" id="heroGreeting">Selamat datang! Memuat data...</p></div>
+    </div>
     <span class="version-badge">v6.3</span>
   </div>
 </header>
