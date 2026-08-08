@@ -447,7 +447,7 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
 <div class="sticky-summary" id="stickySummary">
   <div class="ss-item"><small>Omzet</small><b id="ssOmzet">Rp0</b></div>
   <div class="ss-item"><small>Estimasi Laba</small><b id="ssLaba">Rp0</b></div>
-  <button type="button" class="btn btn-primary" onclick="simpanData()">💾 Simpan</button>
+  <button type="button" class="btn btn-primary" id="btnSimpanSticky" onclick="simpanData()">💾 Simpan</button>
 </div>
 <nav class="bottom-nav" id="bottomNav"></nav>
 <div class="toast" id="toast"></div>
@@ -639,6 +639,7 @@ function fillForm(r){
   setVal('shodaqoh',toRupiah(r[COL.shodaqoh]));bindOpEvents();updatePreview();
   document.getElementById('infoEdit').style.display='block';document.getElementById('btnHapusForm').style.display='block';
   document.getElementById('btnSimpan').textContent='✏️ Simpan Perubahan';document.getElementById('btnReset').style.display='none';
+  const stk=document.getElementById('btnSimpanSticky');if(stk)stk.textContent='✏️ Simpan Perubahan';
   document.getElementById('accOps').classList.add('open');
   document.getElementById('accKas').classList.add('open');
   if(Number(r[COL.pemasukanLain]||0)>0)document.getElementById('accPemasukan').classList.add('open');
@@ -660,6 +661,7 @@ function resetForm(){
   document.getElementById('opContainer').innerHTML=buildOpRows(null);bindOpEvents();updatePreview();
   document.getElementById('infoEdit').style.display='none';document.getElementById('btnHapusForm').style.display='none';
   document.getElementById('btnSimpan').textContent='💾 Simpan';document.getElementById('btnReset').style.display='block';
+  const stk=document.getElementById('btnSimpanSticky');if(stk)stk.textContent='💾 Simpan';
   const dd=document.getElementById('pilihTanggal');if(dd)dd.value='';
   ['accPemasukan','accOps','accKas'].forEach(id=>document.getElementById(id).classList.remove('open'));
 }
