@@ -644,7 +644,11 @@ function fillForm(r){
   document.getElementById('accKas').classList.add('open');
   if(Number(r[COL.pemasukanLain]||0)>0)document.getElementById('accPemasukan').classList.add('open');
 }
-function cekDataHariIni(){const today=getToday();const found=allData.find(r=>{const dt=parseDate(r[COL.tanggal]);return dt&&formatDateLocal(dt)===today;});if(found)fillForm(found);else resetForm();}
+function cekDataHariIni(){
+  if(USER_ROLE!=='penjaga'){resetForm();return;}
+  const today=getToday();const found=allData.find(r=>{const dt=parseDate(r[COL.tanggal]);return dt&&formatDateLocal(dt)===today;});
+  if(found)fillForm(found);else resetForm();
+}
 function isiDropdownTanggal(){const dd=document.getElementById('pilihTanggal');if(!dd)return;dd.innerHTML='<option value="">-- Pilih --</option>';[...allData].reverse().forEach(r=>{const idx=allData.indexOf(r);const o=document.createElement('option');o.value=idx;o.textContent=tglStr(r);dd.appendChild(o);});}
 function loadByTanggal(){const idx=document.getElementById('pilihTanggal')?.value;if(idx===''||idx===undefined){cekDataHariIni();return;}fillForm(allData[idx]);}
 function editFromRekap(id){const r=allData.find(d=>d[COL.id]==id);if(!r)return;fillForm(r);showMainPage('dashboardPage');}
