@@ -246,7 +246,20 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
 </style>
 </head>
 <body>
+<div id="loginOverlay" style="position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#0f766e,#115e59);display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:22px;padding:28px 24px;width:100%;max-width:340px;box-shadow:0 20px 50px rgba(0,0,0,.3);text-align:center;">
+    <img src="icon-192.png" alt="" style="width:64px;height:64px;border-radius:18px;margin-bottom:12px;">
+    <h1 style="font-size:18px;font-weight:900;color:#0f172a;margin-bottom:4px;">GALS NextGen</h1>
+    <p style="font-size:11px;color:#64748b;margin-bottom:18px;">Mangga lebetaken PIN kagem mlebet</p>
+    <input type="password" inputmode="numeric" id="loginPin" placeholder="PIN" maxlength="8"
+      style="width:100%;text-align:center;font-size:20px;letter-spacing:6px;padding:12px;border:1.5px solid #e2e8f0;border-radius:12px;font-family:inherit;font-weight:800;color:#0f172a;">
+    <p id="loginErr" style="font-size:11px;color:#dc2626;margin-top:8px;min-height:14px;"></p>
+    <button onclick="submitLogin()" id="loginBtn"
+      style="width:100%;margin-top:6px;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#0f766e,#115e59);color:#fff;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;">Mlebet</button>
+  </div>
+</div>
 <button class="dark-toggle" onclick="toggleDarkMode()" id="darkBtn">🌙</button>
+<button class="dark-toggle" onclick="doLogout()" id="logoutBtn" style="right:54px;display:none;" title="Metu">🚪</button>
 <header class="header">
   <div class="header-content">
     <div style="display:flex;align-items:center;gap:10px;">
@@ -414,7 +427,8 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
 <script>
 /* ===================== CONFIG ===================== */
 const API_URL='https://script.google.com/macros/s/AKfycbw-fsSED2RBxdAP9j6KP5qq_iSV4G8Y5axyFvS5VUxRkczIFazq-o9CvzRXdkAWpuuS/exec';
-const TOKEN='GALS2026';
+let TOKEN=localStorage.getItem('gals_session')||'';
+let USER_ROLE=localStorage.getItem('gals_role')||'';
 const HARGA={gas22:22000,gas23:23000,gasPink:125000,galon3k:3000,galon4k:4000,galon5k:5000};
 const KULAK={gasStd:15833,gasPink:110000};
 const COL={id:0,tanggal:1,waktu:2,gas22:3,gas23:4,gasPink:5,galon3k:6,galon4k:7,galon5k:8,pemasukanLain:9,ketPemasukanLain:10,realTransport:11,catTransport:12,realWifi:13,catWifi:14,realOpkirimgas:15,catOpkirimgas:16,realAir:17,catAir:18,realListrik:19,catListrik:20,realPemeliharaan:21,catPemeliharaan:22,realTisuTutup:23,catTisuTutup:24,realJajan:25,catJajan:26,realKulakan:27,catKulakan:28,realZakat:29,catZakat:30,realSetoran:31,catSetoran:32,pengeluaranLain:33,catPengeluaranLain:34,shodaqoh:35,totalOmzet:36,omzetGas:37,omzetGalon:38,jatahKulakan:39,jatahOps:40,jatahZakat:41,jatahSetoran:42,totalReal:43,totalPengeluaran:44,labaBersih:45,status:46,createdAt:47,updatedAt:48,version:49};
@@ -529,9 +543,10 @@ function filterData(){const f=document._filter;if(!f)return allData;return allDa
 
 /* ===================== NAV ===================== */
 function buildBottomNav(){
-  return [{id:'dashboardPage',icon:'🏠',label:'Home'},{id:'grafikPage',icon:'📊',label:'Grafik'},{id:'analisisPage',icon:'🔬',label:'Analisis'},{id:'rekapPage',icon:'📋',label:'Rekap'},{id:'kasAdminPage',icon:'💰',label:'Kas'},{id:'setoranPage',icon:'💵',label:'Setoran'},{id:'stokPage',icon:'📦',label:'Stok'}].map(i=>`<button class="nav-btn2${currentPage===i.id?' active':''}" onclick="showMainPage('${i.id}')"><span class="nav-icon">${i.icon}</span><span class="nav-text">${i.label}</span></button>`).join('');
+  return [{id:'dashboardPage',icon:'🏠',label:'Home'},{id:'grafikPage',icon:'📊',label:'Grafik'},{id:'analisisPage',icon:'🔬',label:'Analisis'},{id:'rekapPage',icon:'📋',label:'Rekap'},{id:'kasAdminPage',icon:'💰',label:'Kas'},{id:'setoranPage',icon:'💵',label:'Setoran'},{id:'stokPage',icon:'📦',label:'Stok'}].filter(i=>i.id!=='kasAdminPage'||USER_ROLE==='admin').map(i=>`<button class="nav-btn2${currentPage===i.id?' active':''}" onclick="showMainPage('${i.id}')"><span class="nav-icon">${i.icon}</span><span class="nav-text">${i.label}</span></button>`).join('');
 }
 function showMainPage(p){
+  if(p==='kasAdminPage'&&USER_ROLE!=='admin')p='dashboardPage';
   ['dashboardPage','grafikPage','rekapPage','analisisPage','setoranPage','kasAdminPage','stokPage'].forEach(x=>{document.getElementById(x).style.display='none';});
   document.getElementById(p).style.display='block';currentPage=p;
   document.getElementById('bottomNav').innerHTML=buildBottomNav();
@@ -632,6 +647,7 @@ async function simpanData(){
 async function loadAllData(){
   try{
     const r=await(await fetch(API_URL+'?action=getData&token='+TOKEN)).json();
+    if(r&&r.needLogin){needLogin();return;}
     allData=Array.isArray(r)?r:[];
     const s=await(await fetch(API_URL+'?action=getStok&token='+TOKEN)).json();
     stokSummary=s&&!s.error?s:{};
@@ -907,14 +923,55 @@ function toggleDarkMode(){
 }
 (function initTheme(){const t=localStorage.getItem('gals_theme');if(t){document.documentElement.setAttribute('data-theme',t);}window.addEventListener('DOMContentLoaded',()=>{document.getElementById('darkBtn').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';});})();
 
-/* ===================== INIT ===================== */
-window.addEventListener('DOMContentLoaded',()=>{
+/* ===================== LOGIN / SESSION ===================== */
+function startApp(){
+  document.getElementById('loginOverlay').style.display='none';
+  document.getElementById('logoutBtn').style.display='flex';
   document.getElementById('tanggal').value=getToday();
   document.getElementById('opContainer').innerHTML=buildOpRows(null);
   bindOpEvents();updatePreview();
   document.getElementById('bottomNav').innerHTML=buildBottomNav();
   document.getElementById('stickySummary').classList.add('show');
   loadAllData();
+}
+async function submitLogin(){
+  const pin=document.getElementById('loginPin').value.trim();
+  const errEl=document.getElementById('loginErr');
+  if(!pin){errEl.textContent='PIN wajib diisi';return;}
+  const btn=document.getElementById('loginBtn');
+  btn.disabled=true;btn.textContent='Mriksa...';
+  try{
+    const d=new URLSearchParams();d.append('action','login');d.append('pin',pin);
+    const r=await(await fetch(API_URL,{method:'POST',body:d})).json();
+    if(r.success){
+      TOKEN=r.sessionToken;USER_ROLE=r.role;
+      localStorage.setItem('gals_session',TOKEN);localStorage.setItem('gals_role',USER_ROLE);
+      errEl.textContent='';
+      startApp();
+    }else{
+      errEl.textContent=r.message||'PIN salah';
+    }
+  }catch(e){errEl.textContent='Gagal nyambung server';}
+  btn.disabled=false;btn.textContent='Mlebet';
+}
+function needLogin(){
+  TOKEN='';USER_ROLE='';
+  localStorage.removeItem('gals_session');localStorage.removeItem('gals_role');
+  document.getElementById('loginOverlay').style.display='flex';
+  document.getElementById('logoutBtn').style.display='none';
+  document.getElementById('loginErr').textContent='Sesi wis entek, mangga login malih';
+}
+function doLogout(){
+  if(!confirm('Metu saking aplikasi?'))return;
+  needLogin();
+  document.getElementById('loginErr').textContent='';
+}
+document.getElementById('loginPin').addEventListener('keydown',e=>{if(e.key==='Enter')submitLogin();});
+
+/* ===================== INIT ===================== */
+window.addEventListener('DOMContentLoaded',()=>{
+  if(TOKEN){startApp();}
+  else{document.getElementById('loginOverlay').style.display='flex';}
 });
 </script>
 </body>
