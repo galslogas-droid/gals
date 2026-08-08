@@ -391,6 +391,38 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
   <div id="kasAdminPage" style="display:none;">
     <div class="section-title"><div class="sicon">💰</div><div><h2>Kas Admin</h2><p id="totalKasAdmin">Total Sisa: Rp 0</p></div></div>
     <div class="table-card"><div class="table-responsive"><table><thead><tr><th>Pos</th><th>Jatah</th><th>Real</th><th>Sisa</th></tr></thead><tbody id="kasAdminBody"></tbody></table></div></div>
+
+    <div class="section-title" style="margin-top:18px;"><div class="sicon">⚙️</div><div><h2>Pengaturan Tarif</h2><p>Owahi yen ana rega/tarif sing pancen ganti</p></div></div>
+    <div class="chart-card" style="margin-bottom:12px;">
+      <b style="font-size:11px;color:var(--gray);">💰 Harga Jual (per tabung/galon)</b>
+      <div class="form-grid" style="margin-top:6px;">
+        <div class="input-group"><label>Gas 22K</label><input type="number" id="tarif_harga_gas22" min="0"></div>
+        <div class="input-group"><label>Gas 23K</label><input type="number" id="tarif_harga_gas23" min="0"></div>
+        <div class="input-group"><label>Gas Pink</label><input type="number" id="tarif_harga_gasPink" min="0"></div>
+        <div class="input-group"><label>Galon 3rb</label><input type="number" id="tarif_harga_galon3k" min="0"></div>
+        <div class="input-group"><label>Galon 4rb</label><input type="number" id="tarif_harga_galon4k" min="0"></div>
+        <div class="input-group"><label>Galon 5rb</label><input type="number" id="tarif_harga_galon5k" min="0"></div>
+      </div>
+      <b style="font-size:11px;color:var(--gray);">🔵 Harga Kulakan (per tabung, dienggo ngitung Jatah Kulakan)</b>
+      <div class="form-grid" style="margin-top:6px;">
+        <div class="input-group"><label>Gas Std (22K/23K)</label><input type="number" id="tarif_kulak_gasStd" min="0"></div>
+        <div class="input-group"><label>Gas Pink</label><input type="number" id="tarif_kulak_gasPink" min="0"></div>
+      </div>
+      <b style="font-size:11px;color:var(--gray);">🔧 Jatah Operasional (per tabung/galon terjual, kajaba Jajan flat/hari)</b>
+      <div class="form-grid" style="margin-top:6px;">
+        <div class="input-group"><label>Transport /Gas</label><input type="number" id="tarif_jatah_transportGas" min="0"></div>
+        <div class="input-group"><label>Transport /Galon</label><input type="number" id="tarif_jatah_transportGalon" min="0"></div>
+        <div class="input-group"><label>Wifi /Gas</label><input type="number" id="tarif_jatah_wifiGas" min="0"></div>
+        <div class="input-group"><label>Kirim Gas /Gas</label><input type="number" id="tarif_jatah_opkirimGas" min="0"></div>
+        <div class="input-group"><label>Air /Galon</label><input type="number" id="tarif_jatah_airGalon" min="0"></div>
+        <div class="input-group"><label>Listrik /Galon</label><input type="number" id="tarif_jatah_listrikGalon" min="0"></div>
+        <div class="input-group"><label>Pemeliharaan /Galon</label><input type="number" id="tarif_jatah_pemeliharaanGalon" min="0"></div>
+        <div class="input-group"><label>Tisu-Tutup /Galon</label><input type="number" id="tarif_jatah_tisuTutupGalon" min="0"></div>
+        <div class="input-group"><label>Jajan (flat/hari)</label><input type="number" id="tarif_jatah_jajanFlat" min="0"></div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="simpanTarif()">💾 Simpan Tarif</button>
+      <div style="font-size:10px;color:var(--gray);margin-top:6px;">Owahan mung mengaruhi transaksi ANYAR sabanjuré — data transaksi sing wis kasimpen ora melu diowahi.</div>
+    </div>
   </div>
 
   <div id="stokPage" style="display:none;">
@@ -406,6 +438,9 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
     </div>
     <div class="section-title"><div class="sicon">📊</div><div><h2>Prediksi Stok</h2></div></div>
     <div class="stok-grid2" id="stokPrediksiGrid"></div>
+
+    <div class="section-title" style="margin-top:18px;"><div class="sicon">📋</div><div><h2>Riwayat Stok Masuk</h2><p>30 catetan pungkasan — koreksi yen ana sing salah input</p></div></div>
+    <div class="table-card"><div class="table-responsive"><table><thead><tr><th>Tanggal</th><th>SKU</th><th>Jumlah</th><th>Keterangan</th><th id="stokHistActionHead" style="display:none;">Aksi</th></tr></thead><tbody id="stokHistBody"></tbody></table></div></div>
   </div>
 </div>
 
@@ -658,8 +693,8 @@ async function loadAllData(){
   if(currentPage==='grafikPage')renderGrafik();
   if(currentPage==='analisisPage')renderAnalisis();
   if(currentPage==='setoranPage')renderSetoran();
-  if(currentPage==='kasAdminPage')renderKasAdmin();
-  if(currentPage==='stokPage')renderStokPage();
+  if(currentPage==='kasAdminPage'){renderKasAdmin();loadTarif();}
+  if(currentPage==='stokPage'){renderStokPage();loadStokHistory();}
 }
 
 /* ===================== DASHBOARD ===================== */
@@ -805,6 +840,23 @@ function renderKasAdmin(){
   document.getElementById('totalKasAdmin').textContent='Total Sisa: '+rupiah(totalSisa);
 }
 
+/* ===================== TARIF (Admin) ===================== */
+async function loadTarif(){
+  if(USER_ROLE!=='admin')return;
+  try{
+    const r=await(await fetch(API_URL+'?action=getHarga&token='+TOKEN)).json();
+    if(!r||r.error)return;
+    Object.entries(r.harga||{}).forEach(([k,v])=>{const el=document.getElementById('tarif_harga_'+k);if(el)el.value=v;});
+    Object.entries(r.kulak||{}).forEach(([k,v])=>{const el=document.getElementById('tarif_kulak_'+k);if(el)el.value=v;});
+    Object.entries(r.jatah||{}).forEach(([k,v])=>{const el=document.getElementById('tarif_jatah_'+k);if(el)el.value=v;});
+  }catch(e){}
+}
+async function simpanTarif(){
+  const d=new FormData();d.append('token',TOKEN);d.append('action','updateHarga');
+  document.querySelectorAll('[id^="tarif_"]').forEach(el=>{d.append(el.id.replace('tarif_',''),el.value);});
+  try{const r=await(await fetch(API_URL,{method:'POST',body:d})).json();toast(r.message||'OK');}catch(e){toast('❌ Gagal simpan tarif');}
+}
+
 /* ===================== STOK ===================== */
 async function inputStok(){
   const tgl=document.getElementById('tglStok')?.value;
@@ -823,6 +875,34 @@ function renderStokPage(){
     const prediksiTxt=s.prediksiHabisHari===null?'-':(s.prediksiHabisHari<1?'< 1 hari':s.prediksiHabisHari.toFixed(1)+' hari');
     return `<div class="stok-card2"><h4>${label}</h4><div class="big" style="color:${s.status.color};">${s.stok}</div><div style="font-size:9px;color:var(--gray);margin:6px 0;">tabung tersisa</div><div style="font-size:10px;">Rata2 terjual: <b>${s.rataRataPerHari}/hari</b></div><div style="font-size:10px;margin-top:2px;">Prediksi habis: <b>${prediksiTxt}</b></div><div style="margin-top:8px;font-size:10px;font-weight:800;color:${s.status.color};">${s.status.label}</div></div>`;
   }).join('');
+}
+let stokHistory=[];
+async function loadStokHistory(){
+  try{
+    const r=await(await fetch(API_URL+'?action=getStokHistory&token='+TOKEN)).json();
+    stokHistory=Array.isArray(r)?r:[];
+  }catch(e){stokHistory=[];}
+  renderStokHistory();
+}
+function renderStokHistory(){
+  const body=document.getElementById('stokHistBody');if(!body)return;
+  const isAdmin=USER_ROLE==='admin';
+  document.getElementById('stokHistActionHead').style.display=isAdmin?'':'none';
+  body.innerHTML=stokHistory.map(r=>{
+    const aksi=isAdmin?`<span class="btn-edit" onclick="editStokMasukUI('${r.id}',${r.qty})" title="Koreksi jumlah">✏️</span><span class="btn-delete" onclick="hapusStokMasukUI('${r.id}')" title="Busak">🗑️</span>`:'';
+    return `<tr><td>${r.tanggal}</td><td>${r.sku}</td><td>${r.qty}</td><td>${r.keterangan||''}</td>${isAdmin?`<td>${aksi}</td>`:''}</tr>`;
+  }).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--gray);">Durung ana data</td></tr>';
+}
+async function editStokMasukUI(id,qtyLama){
+  const qtyBaru=prompt('Jumlah sing bener (sakdurunge: '+qtyLama+'):',qtyLama);
+  if(qtyBaru===null||qtyBaru===''||isNaN(qtyBaru))return;
+  const d=new FormData();d.append('token',TOKEN);d.append('action','editStokMasuk');d.append('id',id);d.append('qty',qtyBaru);
+  try{const r=await(await fetch(API_URL,{method:'POST',body:d})).json();toast(r.message||'OK');if(r.success!==false){await loadStokHistory();await loadAllData();}}catch(e){toast('❌ Gagal koreksi stok');}
+}
+async function hapusStokMasukUI(id){
+  if(!confirm('Busak catetan stok masuk iki?'))return;
+  const d=new FormData();d.append('token',TOKEN);d.append('action','hapusStokMasuk');d.append('id',id);
+  try{const r=await(await fetch(API_URL,{method:'POST',body:d})).json();toast(r.message||'OK');if(r.success!==false){await loadStokHistory();await loadAllData();}}catch(e){toast('❌ Gagal mbusak stok');}
 }
 
 /* ===================== GRAFIK ===================== */
