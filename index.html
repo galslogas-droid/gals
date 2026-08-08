@@ -296,7 +296,7 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
     <div class="chart-card" style="margin-bottom:80px;">
       <div class="info-edit" id="infoEdit">⚡ Mode Edit Aktif — data tanggal iki wis ana, owahan bakal nimpa data lawas</div>
       <div class="form-grid">
-        <div class="input-group"><label>📅 Tanggal</label><input type="date" id="tanggal"></div>
+        <div class="input-group"><label>📅 Tanggal</label><input type="date" id="tanggal" onchange="onTanggalChange()"></div>
         <div class="input-group"><label>🔍 Buka data tanggal lain</label><select id="pilihTanggal" onchange="loadByTanggal()"><option value="">-- Hari ini --</option></select></div>
       </div>
 
@@ -655,8 +655,13 @@ async function hapusData(id){
   const d=new FormData();d.append('token',TOKEN);d.append('action','hapus');d.append('id',id);
   try{const r=await(await fetch(API_URL,{method:'POST',body:d})).json();toast(r.message||'✅ Dihapus');resetForm();await loadAllData();}catch(e){toast('❌ Gagal hapus');}
 }
-function resetForm(){
-  editId=null;const tgl=document.getElementById('tanggal');if(tgl)tgl.value=getToday();
+function onTanggalChange(){
+  const val=document.getElementById('tanggal')?.value;if(!val)return;
+  const found=allData.find(r=>{const dt=parseDate(r[COL.tanggal]);return dt&&formatDateLocal(dt)===val;});
+  if(found)fillForm(found);else resetForm(true);
+}
+function resetForm(keepDate){
+  editId=null;if(!keepDate){const tgl=document.getElementById('tanggal');if(tgl)tgl.value=getToday();}
   ['gas22','gas23','gasPink','galon3k','galon4k','galon5k','pemasukanLain','ketPemasukanLain','realKulakan','catKulakan','realZakat','catZakat','realSetoran','catSetoran','pengeluaranLain','catPengeluaranLain','shodaqoh'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('opContainer').innerHTML=buildOpRows(null);bindOpEvents();updatePreview();
   document.getElementById('infoEdit').style.display='none';document.getElementById('btnHapusForm').style.display='none';
