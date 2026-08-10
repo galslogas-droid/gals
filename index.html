@@ -46,22 +46,26 @@ body { font-family: 'Inter', sans-serif; background: linear-gradient(180deg, rgb
 .floating-total { background: var(--glass); padding: 10px 14px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; min-width: 0; }
 .floating-total small { font-size: 10px; color: var(--gray); font-weight: 700; }
 .floating-total strong { font-size: 18px; font-weight: 800; color: var(--success); overflow-wrap: break-word; }
-.top-info { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 16px; }
+.top-info { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 4px; }
 @media(max-width:480px){ .top-info { grid-template-columns: repeat(2,1fr); gap: 6px; } }
 @media(max-width:340px){ .top-info { grid-template-columns: 1fr; } }
-.mini-card { background: var(--glass); border-radius: var(--radius-md); padding: 12px; box-shadow: var(--shadow); border: 1px solid var(--glass-border); text-align: center; min-width: 0; }
-.mini-card .mlabel { font-size: 9px; color: var(--gray); text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
-.mini-card .mvalue { font-size: 15px; font-weight: 800; overflow-wrap: break-word; }
-.stok-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-.stok-mini { background: var(--glass); border-radius: var(--radius-md); padding: 10px 12px; text-align: center; border: 1px solid var(--glass-border); box-shadow: var(--shadow); min-width: 0; }
-.stok-mini .stok-label { font-size: 9px; color: var(--gray); text-transform: uppercase; font-weight: 700; }
-.stok-mini .stok-val { font-size: 15px; font-weight: 800; margin-top: 2px; overflow-wrap: break-word; }
+.stok-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
 .galon-summary { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 16px; }
 @media(max-width:480px){ .galon-summary { grid-template-columns: repeat(2,1fr); } }
 @media(max-width:340px){ .galon-summary { grid-template-columns: 1fr; } }
-.galon-item { background: var(--glass); border-radius: var(--radius-md); padding: 12px; text-align: center; border: 1px solid var(--glass-border); box-shadow: var(--shadow); min-width: 0; }
-.galon-item .g-label { font-size: 9px; color: var(--gray); text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
-.galon-item .g-value { font-size: 17px; font-weight: 800; color: var(--secondary); overflow-wrap: break-word; }
+.kpi-group-label { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; color: var(--gray); text-transform: uppercase; letter-spacing: .04em; margin: 14px 2px 8px; }
+.kpi-card { background: var(--glass); border-radius: var(--radius-md); padding: 10px; box-shadow: var(--shadow); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 9px; min-width: 0; }
+.kpi-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; background: var(--kpi-bg); color: var(--kpi-fg); }
+.kpi-body { min-width: 0; }
+.kpi-label { font-size: 9px; color: var(--gray); text-transform: uppercase; font-weight: 700; margin-bottom: 2px; overflow-wrap: break-word; }
+.kpi-value { font-size: 15px; font-weight: 800; overflow-wrap: break-word; }
+.kpi-teal .kpi-icon { --kpi-bg: rgba(15,118,110,.14); --kpi-fg: var(--primary); }
+.kpi-blue .kpi-icon { --kpi-bg: rgba(14,165,233,.14); --kpi-fg: var(--secondary); }
+.kpi-green .kpi-icon { --kpi-bg: rgba(22,163,74,.14); --kpi-fg: var(--success); }
+.kpi-red .kpi-icon { --kpi-bg: rgba(220,38,38,.14); --kpi-fg: var(--danger); }
+.kpi-gold .kpi-icon { --kpi-bg: rgba(234,179,8,.16); --kpi-fg: var(--gold); }
+.kpi-pink .kpi-icon { --kpi-bg: rgba(219,39,119,.14); --kpi-fg: var(--pink); }
+.kpi-orange .kpi-icon { --kpi-bg: rgba(245,158,11,.16); --kpi-fg: var(--warning); }
 .section-title { display: flex; align-items: center; gap: 8px; margin: 20px 0 12px; flex-wrap: wrap; }
 .section-title .sicon { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 14px; background: linear-gradient(135deg, var(--primary), var(--primary2)); color: #fff; font-size: 18px; flex-shrink: 0; }
 .section-title h2 { font-size: 16px; font-weight: 800; }
@@ -271,16 +275,19 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
 </header>
 <div class="container">
   <div class="floating-total" id="floatingTotal"><small>💰 Omzet Hari Ini</small><strong id="floatingTotalVal">Rp 0</strong></div>
+  <div class="kpi-group-label">📊 Ringkesan Periode</div>
   <div class="top-info" id="topInfo"></div>
+  <div class="kpi-group-label">⛽ Stok Gas</div>
   <div class="stok-row">
-    <div class="stok-mini"><div class="stok-label">🔥 Gas 22K/23K</div><div class="stok-val" id="stokStdTop">-</div></div>
-    <div class="stok-mini"><div class="stok-label">💗 Gas Pink</div><div class="stok-val" id="stokPinkTop">-</div></div>
+    <div class="kpi-card kpi-orange"><div class="kpi-icon">🔥</div><div class="kpi-body"><div class="kpi-label">Gas 22K/23K</div><div class="kpi-value" id="stokStdTop">-</div></div></div>
+    <div class="kpi-card kpi-pink"><div class="kpi-icon">💗</div><div class="kpi-body"><div class="kpi-label">Gas Pink</div><div class="kpi-value" id="stokPinkTop">-</div></div></div>
   </div>
+  <div class="kpi-group-label">💧 Penjualan Galon</div>
   <div class="galon-summary" id="galonSummary">
-    <div class="galon-item"><div class="g-label">💧 Hari Ini</div><div class="g-value" id="galonHari">0</div></div>
-    <div class="galon-item"><div class="g-label">📅 Minggu Ini</div><div class="g-value" id="galonMinggu">0</div></div>
-    <div class="galon-item"><div class="g-label">📆 Bulan Ini</div><div class="g-value" id="galonBulan">0</div></div>
-    <div class="galon-item"><div class="g-label">📊 Tahun Ini</div><div class="g-value" id="galonTahun">0</div></div>
+    <div class="kpi-card kpi-blue"><div class="kpi-icon">💧</div><div class="kpi-body"><div class="kpi-label">Hari Ini</div><div class="kpi-value" id="galonHari">0</div></div></div>
+    <div class="kpi-card kpi-blue"><div class="kpi-icon">📅</div><div class="kpi-body"><div class="kpi-label">Minggu Ini</div><div class="kpi-value" id="galonMinggu">0</div></div></div>
+    <div class="kpi-card kpi-blue"><div class="kpi-icon">📆</div><div class="kpi-body"><div class="kpi-label">Bulan Ini</div><div class="kpi-value" id="galonBulan">0</div></div></div>
+    <div class="kpi-card kpi-blue"><div class="kpi-icon">📊</div><div class="kpi-body"><div class="kpi-label">Tahun Ini</div><div class="kpi-value" id="galonTahun">0</div></div></div>
   </div>
 
   <div id="dashboardPage">
@@ -748,8 +755,8 @@ function renderTopInfo(filtered){
   const hariUntung=filtered.filter(r=>Number(r[COL.labaBersih]||0)>=0).length;
   const hariRugi=filtered.length-hariUntung;
   const rataOmzet=filtered.length?a.omzet/filtered.length:0;
-  const items=[['📋 Transaksi',filtered.length],['📈 Rata2 Omzet/Hari',rupiah(rataOmzet)],['🟢 Hari Untung',hariUntung],['🔴 Hari Rugi',hariRugi]];
-  document.getElementById('topInfo').innerHTML=items.map(([l,v])=>`<div class="mini-card"><div class="mlabel">${l}</div><div class="mvalue">${v}</div></div>`).join('');
+  const items=[['teal','📋','Transaksi',filtered.length],['blue','📈','Rata2 Omzet/Hari',rupiah(rataOmzet)],['green','🟢','Hari Untung',hariUntung],['red','🔴','Hari Rugi',hariRugi]];
+  document.getElementById('topInfo').innerHTML=items.map(([c,i,l,v])=>`<div class="kpi-card kpi-${c}"><div class="kpi-icon">${i}</div><div class="kpi-body"><div class="kpi-label">${l}</div><div class="kpi-value">${v}</div></div></div>`).join('');
 }
 function renderStokMini(){
   const std=stokSummary.GasStd,pink=stokSummary.GasPink;
@@ -758,7 +765,7 @@ function renderStokMini(){
 }
 function renderGalonSummary(){
   const now=new Date();
-  const startWeek=new Date(now);const h=now.getDay()||7;startWeek.setDate(now.getDate()-h+1);
+  const startWeek=new Date(now.getFullYear(),now.getMonth(),now.getDate());const h=now.getDay()||7;startWeek.setDate(startWeek.getDate()-h+1);
   const startMonth=new Date(now.getFullYear(),now.getMonth(),1);
   const startYear=new Date(now.getFullYear(),0,1);
   const today=getToday();
