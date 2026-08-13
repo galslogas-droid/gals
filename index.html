@@ -717,6 +717,10 @@ function resetForm(keepDate){
 async function simpanData(){
   const tanggal=document.getElementById('tanggal')?.value||'';
   if(!tanggal){toast('⚠️ Tanggal wajib diisi');return;}
+  const btns=[document.getElementById('btnSimpan'),document.getElementById('btnSimpanSticky')].filter(Boolean);
+  if(btns.some(b=>b.disabled))return; // jaga-jaga aja nganti double-tap kirim 2x
+  const oldTxt=btns.map(b=>b.textContent);
+  btns.forEach(b=>{b.disabled=true;b.textContent='⏳ Nyimpen...';});
   const d=new FormData();d.append('token',TOKEN);
   if(editId){d.append('action','update');d.append('id',editId);}else d.append('action','simpan');
   d.append('tanggal',tanggal);d.append('gas22',getNum('gas22'));d.append('gas23',getNum('gas23'));d.append('gasPink',getNum('gasPink'));
@@ -728,7 +732,20 @@ async function simpanData(){
   d.append('realSetoran',getNum('realSetoran'));d.append('catSetoran',document.getElementById('catSetoran')?.value||'');
   d.append('pengeluaranLain',getNum('pengeluaranLain'));d.append('catPengeluaranLain',document.getElementById('catPengeluaranLain')?.value||'');
   d.append('shodaqoh',getNum('shodaqoh'));
-  try{const r=await(await fetch(API_URL,{method:'POST',body:d})).json();toast(r.message||(r.success?'✅ Tersimpan':'❌ Gagal'));if(r.success!==false){resetForm();await loadAllData();}}catch(e){toast('❌ Gagal koneksi ke server');}
+  try{
+    const r=await(await fetch(API_URL,{method:'POST',body:d})).json();
+    toast(r.message||(r.success?'✅ Tersimpan':'❌ Gagal'));
+    if(r.success!==false){
+      resetForm(); // wis nyimpen konfirmasi asli saka server -- lagi resetForm/textContent tombol dibalekake (aman, dudu ngapusi)
+      btns.forEach(b=>{b.disabled=false;});
+      loadAllData(); // ora ditunggoni -- mung nganyari dashboard/tabel ing mburi, ora ngalangi input sabanjure
+    }else{
+      btns.forEach((b,i)=>{b.disabled=false;b.textContent=oldTxt[i];});
+    }
+  }catch(e){
+    toast('❌ Gagal koneksi ke server');
+    btns.forEach((b,i)=>{b.disabled=false;b.textContent=oldTxt[i];});
+  }
 }
 async function loadAllData(){
   try{
