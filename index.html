@@ -429,7 +429,7 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
   </div>
 
   <div id="kasAdminPage" style="display:none;">
-    <div class="section-title"><div class="sicon">💰</div><div><h2>Kas Admin</h2><p id="totalKasAdmin">Total Sisa: Rp 0</p></div></div>
+    <div class="section-title"><div class="sicon">💰</div><div><h2>Kas Admin <span class="acc-badge" id="kasAdminPeriodBadge">Semua data</span></h2><p id="totalKasAdmin">Total Sisa: Rp 0</p></div></div>
     <div class="table-card"><div class="table-responsive"><table><thead><tr><th>Pos</th><th>Jatah</th><th>Real</th><th>Sisa</th></tr></thead><tbody id="kasAdminBody"></tbody></table></div></div>
 
     <div class="section-title" style="margin-top:18px;"><div class="sicon">⚙️</div><div><h2>Pengaturan Tarif</h2><p>Owahi yen ana rega/tarif sing pancen ganti</p></div></div>
@@ -899,6 +899,8 @@ function renderSetoran(){
 
 /* ===================== KAS ADMIN ===================== */
 function renderKasAdmin(){
+  const badgeEl=document.getElementById('kasAdminPeriodBadge');
+  if(badgeEl){const fl=document.getElementById('filterLabel');badgeEl.textContent=fl?fl.textContent:'Semua data';}
   const filtered=filterData();const a=aggregatePeriod(filtered);
   let html='',totalSisa=0;
   POS.forEach(p=>{const {jatah,real,sisa}=a.posAgg[p.key];totalSisa+=sisa;html+=`<tr><td>${p.label}</td><td>${rupiah(jatah)}</td><td>${rupiah(real)}</td><td style="color:${sisa>=0?'var(--success)':'var(--danger)'};font-weight:700;">${rupiah(sisa)}</td></tr>`;});
