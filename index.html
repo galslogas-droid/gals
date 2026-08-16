@@ -330,6 +330,12 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
       <button class="filter-btn" onclick="setFilter('hari',this)">📅 Hari Ini</button>
       <button class="filter-btn" onclick="setFilter('minggu',this)">📆 Minggu Ini</button>
       <button class="filter-btn" onclick="setFilter('bulan',this)">📊 Bulan Ini</button>
+      <button class="filter-btn" id="btnFilterCustom" onclick="setFilter('custom',this)">🗓️ Tanggal Tartamtu</button>
+    </div>
+    <div id="customDateRow" style="display:none;gap:8px;align-items:end;margin:-8px 0 16px;flex-wrap:wrap;">
+      <div class="input-group" style="flex:1;min-width:120px;"><label>Saking tanggal</label><input type="date" id="filterMulai" onchange="applyCustomFilter()"></div>
+      <div class="input-group" style="flex:1;min-width:120px;"><label>Dumugi tanggal</label><input type="date" id="filterAkhir" onchange="applyCustomFilter()"></div>
+      <button class="filter-btn" style="height:37px;flex-shrink:0;" onclick="applyCustomFilter()">✅ Terapaken</button>
     </div>
     <div class="stats-grid" id="statContainer"></div>
     <div class="section-title"><div class="sicon">📝</div><div><h2>Input Penjualan</h2><p>Isi jumlah terjual, sisane opsional</p></div></div>
@@ -604,6 +610,15 @@ document._filter=null;
 function setFilter(j,btn){
   document.querySelectorAll('#dashboardPage .filter-row .filter-btn').forEach(b=>b.classList.remove('active'));
   if(btn)btn.classList.add('active');
+  const customRow=document.getElementById('customDateRow');
+  if(j==='custom'){
+    customRow.style.display='flex';
+    const mEl=document.getElementById('filterMulai'),aEl=document.getElementById('filterAkhir');
+    if(!mEl.value||!aEl.value){const today=formatDateLocal(new Date());mEl.value=mEl.value||today;aEl.value=aEl.value||today;}
+    applyCustomFilter();
+    return;
+  }
+  customRow.style.display='none';
   if(j==='semua'){document._filter=null;document.getElementById('filterLabel').textContent='Semua data';}
   else{
     const now=new Date();let m=new Date(now),a=new Date(now);
@@ -612,6 +627,18 @@ function setFilter(j,btn){
     else if(j==='bulan'){m.setDate(1);document.getElementById('filterLabel').textContent='Data bulan ini';}
     document._filter={mulai:formatDateLocal(m),akhir:formatDateLocal(a)};
   }
+  updateDashboard();renderTable();if(currentPage==='kasAdminPage')renderKasAdmin();
+}
+function applyCustomFilter(){
+  const mEl=document.getElementById('filterMulai'),aEl=document.getElementById('filterAkhir');
+  let mulai=mEl.value,akhir=aEl.value;
+  if(!mulai&&!akhir)return;
+  if(!mulai)mulai=akhir;
+  if(!akhir)akhir=mulai;
+  if(mulai>akhir){const t=mulai;mulai=akhir;akhir=t;mEl.value=mulai;aEl.value=akhir;}
+  document._filter={mulai,akhir};
+  const fmt=s=>{const[y,mo,d]=s.split('-');return new Date(y,mo-1,d).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});};
+  document.getElementById('filterLabel').textContent=mulai===akhir?('Data tanggal '+fmt(mulai)):('Data '+fmt(mulai)+' s.d. '+fmt(akhir));
   updateDashboard();renderTable();if(currentPage==='kasAdminPage')renderKasAdmin();
 }
 function filterData(){const f=document._filter;if(!f)return allData;return allData.filter(d=>{const t=tglStr(d);return t>=f.mulai&&t<=f.akhir;});}
