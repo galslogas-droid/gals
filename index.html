@@ -945,11 +945,18 @@ function renderKasAdmin(){
   const badgeEl=document.getElementById('kasAdminPeriodBadge');
   if(badgeEl){const fl=document.getElementById('filterLabel');badgeEl.textContent=fl?fl.textContent:'Semua data';}
   const filtered=filterData();const a=aggregatePeriod(filtered);
-  let html='',totalSisa=0;
-  POS.forEach(p=>{const {jatah,real,sisa}=a.posAgg[p.key];totalSisa+=sisa;html+=`<tr><td>${p.label}</td><td>${rupiah(jatah)}</td><td>${rupiah(real)}</td><td style="color:${sisa>=0?'var(--success)':'var(--danger)'};font-weight:700;">${rupiah(sisa)}</td></tr>`;});
+  let html='';
+  // Cathetan: baris per-kategori (Transport/Wifi/dst) ing ngisor iki isih bisa mung ESTIMASI
+  // tarif-saiki kanggo transaksi LAWAS (durung duwe kolom historis, deleng cathetan
+  // aggregatePeriod()) - dadi ora dienggo ngitung "Total Sisa" ing ndhuwur, supaya total
+  // sing dituduhake Admin mesthi cocog karo angka otoritatif (Rekap/PDF), ora katut mbleset
+  // yen tarif operasional tau diowahi. Sisa saben baris ing tabel tetep informasi/estimasi.
+  POS.forEach(p=>{const {jatah,real,sisa}=a.posAgg[p.key];html+=`<tr><td>${p.label}</td><td>${rupiah(jatah)}</td><td>${rupiah(real)}</td><td style="color:${sisa>=0?'var(--success)':'var(--danger)'};font-weight:700;">${rupiah(sisa)}</td></tr>`;});
   const extras=[['🔵 Kulakan',a.jatahKulakan,a.realKulakan],['🕌 Zakat',a.jatahZakat,a.realZakat],['🟡 Setoran',a.jatahSetoran,a.realSetoran]];
-  extras.forEach(([label,j,r])=>{const sVal=j-r;totalSisa+=sVal;html+=`<tr><td>${label}</td><td>${rupiah(j)}</td><td>${rupiah(r)}</td><td style="color:${sVal>=0?'var(--success)':'var(--danger)'};font-weight:700;">${rupiah(sVal)}</td></tr>`;});
+  extras.forEach(([label,j,r])=>{const sVal=j-r;html+=`<tr><td>${label}</td><td>${rupiah(j)}</td><td>${rupiah(r)}</td><td style="color:${sVal>=0?'var(--success)':'var(--danger)'};font-weight:700;">${rupiah(sVal)}</td></tr>`;});
   document.getElementById('kasAdminBody').innerHTML=html;
+  const opsSisaOtoritatif=(a.jatahOps+a.jatahJajan)-(a.realOps+a.realJajan);
+  const totalSisa=opsSisaOtoritatif+(a.jatahKulakan-a.realKulakan)+(a.jatahZakat-a.realZakat)+(a.jatahSetoran-a.realSetoran);
   document.getElementById('totalKasAdmin').textContent='Total Sisa: '+rupiah(totalSisa);
 }
 
