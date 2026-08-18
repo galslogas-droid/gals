@@ -510,18 +510,24 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
 const API_URL='https://script.google.com/macros/s/AKfycbw-fsSED2RBxdAP9j6KP5qq_iSV4G8Y5axyFvS5VUxRkczIFazq-o9CvzRXdkAWpuuS/exec';
 let TOKEN=localStorage.getItem('gals_session')||'';
 let USER_ROLE=localStorage.getItem('gals_role')||'';
+// HARGA/KULAK/JATAH: nilai *_DEFAULT ing Code.gs dienggo mung minangka isian wiwitan
+// (supaya app tetep bisa dienggo sadurunge tarif kesambung saka backend). syncTarif()
+// dipanggil pas app mbukak (kanggo SEMUA role, ora mung admin) lan bakal nimpa
+// properti-properti iki nganggo tarif nyata sing kesimpen ing Script Properties —
+// dadi owahan tarif liwat Admin > Tarif melu katon ing kene, ora kepenthok statis.
 const HARGA={gas22:22000,gas23:23000,gasPink:125000,galon3k:3000,galon4k:4000,galon5k:5000};
 const KULAK={gasStd:15833,gasPink:110000};
+const JATAH={transportGas:400,transportGalon:500,wifiGas:500,opkirimGas:833,airGalon:500,listrikGalon:500,pemeliharaanGalon:500,tisuTutupGalon:500,jajanFlat:10000};
 const COL={id:0,tanggal:1,waktu:2,gas22:3,gas23:4,gasPink:5,galon3k:6,galon4k:7,galon5k:8,pemasukanLain:9,ketPemasukanLain:10,realTransport:11,catTransport:12,realWifi:13,catWifi:14,realOpkirimgas:15,catOpkirimgas:16,realAir:17,catAir:18,realListrik:19,catListrik:20,realPemeliharaan:21,catPemeliharaan:22,realTisuTutup:23,catTisuTutup:24,realJajan:25,catJajan:26,realKulakan:27,catKulakan:28,realZakat:29,catZakat:30,realSetoran:31,catSetoran:32,pengeluaranLain:33,catPengeluaranLain:34,shodaqoh:35,totalOmzet:36,omzetGas:37,omzetGalon:38,jatahKulakan:39,jatahOps:40,jatahZakat:41,jatahSetoran:42,totalReal:43,totalPengeluaran:44,labaBersih:45,status:46,createdAt:47,updatedAt:48,version:49};
 const POS=[
-  {key:'realTransport',catKey:'catTransport',label:'🚚 Transport',jatahFn:(g,gl)=>(g*400)+(gl*500),realCol:COL.realTransport,catCol:COL.catTransport},
-  {key:'realWifi',catKey:'catWifi',label:'🌐 Wifi',jatahFn:(g)=>g*500,realCol:COL.realWifi,catCol:COL.catWifi},
-  {key:'realOpkirimgas',catKey:'catOpkirimgas',label:'📦 Op.Kirim Gas',jatahFn:(g)=>g*833,realCol:COL.realOpkirimgas,catCol:COL.catOpkirimgas},
-  {key:'realAir',catKey:'catAir',label:'💧 Air',jatahFn:(_,gl)=>gl*500,realCol:COL.realAir,catCol:COL.catAir},
-  {key:'realListrik',catKey:'catListrik',label:'⚡ Listrik',jatahFn:(_,gl)=>gl*500,realCol:COL.realListrik,catCol:COL.catListrik},
-  {key:'realPemeliharaan',catKey:'catPemeliharaan',label:'🔧 Pemeliharaan',jatahFn:(_,gl)=>gl*500,realCol:COL.realPemeliharaan,catCol:COL.catPemeliharaan},
-  {key:'realTisuTutup',catKey:'catTisuTutup',label:'🧻 Tutup & Tisu',jatahFn:(_,gl)=>gl*500,realCol:COL.realTisuTutup,catCol:COL.catTisuTutup},
-  {key:'realJajan',catKey:'catJajan',label:'🟠 Jajan 2 Orang',jatahFn:()=>10000,realCol:COL.realJajan,catCol:COL.catJajan}
+  {key:'realTransport',catKey:'catTransport',label:'🚚 Transport',jatahFn:(g,gl)=>(g*JATAH.transportGas)+(gl*JATAH.transportGalon),realCol:COL.realTransport,catCol:COL.catTransport},
+  {key:'realWifi',catKey:'catWifi',label:'🌐 Wifi',jatahFn:(g)=>g*JATAH.wifiGas,realCol:COL.realWifi,catCol:COL.catWifi},
+  {key:'realOpkirimgas',catKey:'catOpkirimgas',label:'📦 Op.Kirim Gas',jatahFn:(g)=>g*JATAH.opkirimGas,realCol:COL.realOpkirimgas,catCol:COL.catOpkirimgas},
+  {key:'realAir',catKey:'catAir',label:'💧 Air',jatahFn:(_,gl)=>gl*JATAH.airGalon,realCol:COL.realAir,catCol:COL.catAir},
+  {key:'realListrik',catKey:'catListrik',label:'⚡ Listrik',jatahFn:(_,gl)=>gl*JATAH.listrikGalon,realCol:COL.realListrik,catCol:COL.catListrik},
+  {key:'realPemeliharaan',catKey:'catPemeliharaan',label:'🔧 Pemeliharaan',jatahFn:(_,gl)=>gl*JATAH.pemeliharaanGalon,realCol:COL.realPemeliharaan,catCol:COL.catPemeliharaan},
+  {key:'realTisuTutup',catKey:'catTisuTutup',label:'🧻 Tutup & Tisu',jatahFn:(_,gl)=>gl*JATAH.tisuTutupGalon,realCol:COL.realTisuTutup,catCol:COL.catTisuTutup},
+  {key:'realJajan',catKey:'catJajan',label:'🟠 Jajan 2 Orang',jatahFn:()=>JATAH.jajanFlat,realCol:COL.realJajan,catCol:COL.catJajan}
 ];
 let allData=[],editId=null,currentPage='dashboardPage',stokSummary={},toastTimer=null;
 let chartInstances=[],chartTrend=null,chartKomposisi=null,chartForecast=null,currentAnalisisFilter='minggu';
@@ -937,16 +943,26 @@ function renderKasAdmin(){
   document.getElementById('totalKasAdmin').textContent='Total Sisa: '+rupiah(totalSisa);
 }
 
-/* ===================== TARIF (Admin) ===================== */
-async function loadTarif(){
-  if(USER_ROLE!=='admin')return;
+/* ===================== TARIF (disinkron saka backend saben app mbukak, kanggo SEMUA role —
+   dudu mung nalika Admin mbukak kaca Tarif. Iki sing mbenerake bug "tarif diowahi Admin ora
+   melu katon" kanggo preview simpen, rega ing form, lan Jatah Operasional ing Kas Admin/Dashboard) */
+async function syncTarif(){
   try{
     const r=await(await fetch(API_URL+'?action=getHarga&token='+TOKEN)).json();
-    if(!r||r.error)return;
-    Object.entries(r.harga||{}).forEach(([k,v])=>{const el=document.getElementById('tarif_harga_'+k);if(el)el.value=v;});
-    Object.entries(r.kulak||{}).forEach(([k,v])=>{const el=document.getElementById('tarif_kulak_'+k);if(el)el.value=v;});
-    Object.entries(r.jatah||{}).forEach(([k,v])=>{const el=document.getElementById('tarif_jatah_'+k);if(el)el.value=v;});
-  }catch(e){}
+    if(!r||r.error)return null;
+    Object.assign(HARGA,r.harga||{});
+    Object.assign(KULAK,r.kulak||{});
+    Object.assign(JATAH,r.jatah||{});
+    return r;
+  }catch(e){ return null; }
+}
+async function loadTarif(){
+  if(USER_ROLE!=='admin')return;
+  const r=await syncTarif();
+  if(!r)return;
+  Object.entries(r.harga||{}).forEach(([k,v])=>{const el=document.getElementById('tarif_harga_'+k);if(el)el.value=v;});
+  Object.entries(r.kulak||{}).forEach(([k,v])=>{const el=document.getElementById('tarif_kulak_'+k);if(el)el.value=v;});
+  Object.entries(r.jatah||{}).forEach(([k,v])=>{const el=document.getElementById('tarif_jatah_'+k);if(el)el.value=v;});
 }
 async function simpanTarif(){
   const d=new FormData();d.append('token',TOKEN);d.append('action','updateHarga');
@@ -1101,7 +1117,7 @@ function toggleDarkMode(){
 (function initTheme(){const t=localStorage.getItem('gals_theme');if(t){document.documentElement.setAttribute('data-theme',t);}window.addEventListener('DOMContentLoaded',()=>{document.getElementById('darkBtn').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';});})();
 
 /* ===================== LOGIN / SESSION ===================== */
-function startApp(){
+async function startApp(){
   document.getElementById('loginOverlay').style.display='none';
   document.getElementById('logoutBtn').style.display='flex';
   document.getElementById('tanggal').value=getToday();
@@ -1109,6 +1125,8 @@ function startApp(){
   bindOpEvents();updatePreview();
   document.getElementById('bottomNav').innerHTML=buildBottomNav();
   document.getElementById('stickySummary').classList.add('show');
+  await syncTarif();
+  updatePreview();
   loadAllData();
 }
 async function submitLogin(){
