@@ -518,16 +518,16 @@ let USER_ROLE=localStorage.getItem('gals_role')||'';
 const HARGA={gas22:22000,gas23:23000,gasPink:125000,galon3k:3000,galon4k:4000,galon5k:5000};
 const KULAK={gasStd:15833,gasPink:110000};
 const JATAH={transportGas:400,transportGalon:500,wifiGas:500,opkirimGas:833,airGalon:500,listrikGalon:500,pemeliharaanGalon:500,tisuTutupGalon:500,jajanFlat:10000};
-const COL={id:0,tanggal:1,waktu:2,gas22:3,gas23:4,gasPink:5,galon3k:6,galon4k:7,galon5k:8,pemasukanLain:9,ketPemasukanLain:10,realTransport:11,catTransport:12,realWifi:13,catWifi:14,realOpkirimgas:15,catOpkirimgas:16,realAir:17,catAir:18,realListrik:19,catListrik:20,realPemeliharaan:21,catPemeliharaan:22,realTisuTutup:23,catTisuTutup:24,realJajan:25,catJajan:26,realKulakan:27,catKulakan:28,realZakat:29,catZakat:30,realSetoran:31,catSetoran:32,pengeluaranLain:33,catPengeluaranLain:34,shodaqoh:35,totalOmzet:36,omzetGas:37,omzetGalon:38,jatahKulakan:39,jatahOps:40,jatahZakat:41,jatahSetoran:42,totalReal:43,totalPengeluaran:44,labaBersih:45,status:46,createdAt:47,updatedAt:48,version:49};
+const COL={id:0,tanggal:1,waktu:2,gas22:3,gas23:4,gasPink:5,galon3k:6,galon4k:7,galon5k:8,pemasukanLain:9,ketPemasukanLain:10,realTransport:11,catTransport:12,realWifi:13,catWifi:14,realOpkirimgas:15,catOpkirimgas:16,realAir:17,catAir:18,realListrik:19,catListrik:20,realPemeliharaan:21,catPemeliharaan:22,realTisuTutup:23,catTisuTutup:24,realJajan:25,catJajan:26,realKulakan:27,catKulakan:28,realZakat:29,catZakat:30,realSetoran:31,catSetoran:32,pengeluaranLain:33,catPengeluaranLain:34,shodaqoh:35,totalOmzet:36,omzetGas:37,omzetGalon:38,jatahKulakan:39,jatahOps:40,jatahZakat:41,jatahSetoran:42,totalReal:43,totalPengeluaran:44,labaBersih:45,status:46,createdAt:47,updatedAt:48,version:49,jatahOpsTransport:50,jatahOpsWifi:51,jatahOpsOpkirim:52,jatahOpsAir:53,jatahOpsListrik:54,jatahOpsPemeliharaan:55,jatahOpsTisuTutup:56,jatahOpsJajan:57};
 const POS=[
-  {key:'realTransport',catKey:'catTransport',label:'🚚 Transport',jatahFn:(g,gl)=>(g*JATAH.transportGas)+(gl*JATAH.transportGalon),realCol:COL.realTransport,catCol:COL.catTransport},
-  {key:'realWifi',catKey:'catWifi',label:'🌐 Wifi',jatahFn:(g)=>g*JATAH.wifiGas,realCol:COL.realWifi,catCol:COL.catWifi},
-  {key:'realOpkirimgas',catKey:'catOpkirimgas',label:'📦 Op.Kirim Gas',jatahFn:(g)=>g*JATAH.opkirimGas,realCol:COL.realOpkirimgas,catCol:COL.catOpkirimgas},
-  {key:'realAir',catKey:'catAir',label:'💧 Air',jatahFn:(_,gl)=>gl*JATAH.airGalon,realCol:COL.realAir,catCol:COL.catAir},
-  {key:'realListrik',catKey:'catListrik',label:'⚡ Listrik',jatahFn:(_,gl)=>gl*JATAH.listrikGalon,realCol:COL.realListrik,catCol:COL.catListrik},
-  {key:'realPemeliharaan',catKey:'catPemeliharaan',label:'🔧 Pemeliharaan',jatahFn:(_,gl)=>gl*JATAH.pemeliharaanGalon,realCol:COL.realPemeliharaan,catCol:COL.catPemeliharaan},
-  {key:'realTisuTutup',catKey:'catTisuTutup',label:'🧻 Tutup & Tisu',jatahFn:(_,gl)=>gl*JATAH.tisuTutupGalon,realCol:COL.realTisuTutup,catCol:COL.catTisuTutup},
-  {key:'realJajan',catKey:'catJajan',label:'🟠 Jajan 2 Orang',jatahFn:()=>JATAH.jajanFlat,realCol:COL.realJajan,catCol:COL.catJajan}
+  {key:'realTransport',catKey:'catTransport',label:'🚚 Transport',jatahFn:(g,gl)=>(g*JATAH.transportGas)+(gl*JATAH.transportGalon),realCol:COL.realTransport,catCol:COL.catTransport,histCol:COL.jatahOpsTransport},
+  {key:'realWifi',catKey:'catWifi',label:'🌐 Wifi',jatahFn:(g)=>g*JATAH.wifiGas,realCol:COL.realWifi,catCol:COL.catWifi,histCol:COL.jatahOpsWifi},
+  {key:'realOpkirimgas',catKey:'catOpkirimgas',label:'📦 Op.Kirim Gas',jatahFn:(g)=>g*JATAH.opkirimGas,realCol:COL.realOpkirimgas,catCol:COL.catOpkirimgas,histCol:COL.jatahOpsOpkirim},
+  {key:'realAir',catKey:'catAir',label:'💧 Air',jatahFn:(_,gl)=>gl*JATAH.airGalon,realCol:COL.realAir,catCol:COL.catAir,histCol:COL.jatahOpsAir},
+  {key:'realListrik',catKey:'catListrik',label:'⚡ Listrik',jatahFn:(_,gl)=>gl*JATAH.listrikGalon,realCol:COL.realListrik,catCol:COL.catListrik,histCol:COL.jatahOpsListrik},
+  {key:'realPemeliharaan',catKey:'catPemeliharaan',label:'🔧 Pemeliharaan',jatahFn:(_,gl)=>gl*JATAH.pemeliharaanGalon,realCol:COL.realPemeliharaan,catCol:COL.catPemeliharaan,histCol:COL.jatahOpsPemeliharaan},
+  {key:'realTisuTutup',catKey:'catTisuTutup',label:'🧻 Tutup & Tisu',jatahFn:(_,gl)=>gl*JATAH.tisuTutupGalon,realCol:COL.realTisuTutup,catCol:COL.catTisuTutup,histCol:COL.jatahOpsTisuTutup},
+  {key:'realJajan',catKey:'catJajan',label:'🟠 Jajan 2 Orang',jatahFn:()=>JATAH.jajanFlat,realCol:COL.realJajan,catCol:COL.catJajan,histCol:COL.jatahOpsJajan}
 ];
 let allData=[],editId=null,currentPage='dashboardPage',stokSummary={},toastTimer=null;
 let chartInstances=[],chartTrend=null,chartKomposisi=null,chartForecast=null,currentAnalisisFilter='minggu';
@@ -810,14 +810,24 @@ const CARD_DEFS=[
   {key:'setoran',icon:'🟡',label:'Setoran',cls:'card-red'}
 ];
 function aggregatePeriod(data){
-  const posAgg={};POS.forEach(p=>{let j=0,r=0;data.forEach(row=>{const g=Number(row[COL.gas22]||0)+Number(row[COL.gas23]||0)+Number(row[COL.gasPink]||0);const gl=Number(row[COL.galon3k]||0)+Number(row[COL.galon4k]||0)+Number(row[COL.galon5k]||0);j+=p.jatahFn(g,gl);r+=Number(row[p.realCol]||0);});posAgg[p.key]={jatah:j,real:r,sisa:j-r,label:p.label};});
-  const jatahOpsTanpaJajan=POS.filter(p=>p.key!=='realJajan').reduce((s2,p)=>s2+posAgg[p.key].jatah,0);
+  // posAgg per-kategori (transport/wifi/opkirim/dll): kanggo baris ANYAR (sasampunipun
+  // Code.gs COL.jatahOpsTransport dst ditambahke), diwaca saka kolom historis sing wis
+  // kesimpen nalika transaksi kasebut disimpen (tarif nalika kuwi, akurat). Kanggo baris
+  // LAWAS sadurunge migrasi iki (kolom historis kosong/undefined, dibedakake karo angka
+  // 0 sing sah), fallback menyang estimasi tarif SAIKI - siji-sijine cara amarga rincian
+  // per-kategori-e ora tau kesimpen. Total gabungan tetep dipeksa cocog COL.jatahOps
+  // (di bawah, jatahOpsTanpaJajan) supaya Dashboard ora beda karo Rekap/PDF.
+  const posAgg={};POS.forEach(p=>{let j=0,r=0;data.forEach(row=>{const hist=row[p.histCol];if(hist!==undefined&&hist!==''){j+=Number(hist)||0;}else{const g=Number(row[COL.gas22]||0)+Number(row[COL.gas23]||0)+Number(row[COL.gasPink]||0);const gl=Number(row[COL.galon3k]||0)+Number(row[COL.galon4k]||0)+Number(row[COL.galon5k]||0);j+=p.jatahFn(g,gl);}r+=Number(row[p.realCol]||0);});posAgg[p.key]={jatah:j,real:r,sisa:j-r,label:p.label};});
+  const jatahOpsTanpaJajanEstimasi=POS.filter(p=>p.key!=='realJajan').reduce((s2,p)=>s2+posAgg[p.key].jatah,0);
   const realOpsTanpaJajan=POS.filter(p=>p.key!=='realJajan').reduce((s2,p)=>s2+posAgg[p.key].real,0);
+  const storedJatahOpsTotal=sum(data,COL.jatahOps); // otoritatif: kesimpen nalika save, tarif nalika kuwi
+  const jatahJajan=posAgg.realJajan.jatah; // during ana kolom kapisah kanggo jajan, isih estimasi tarif saiki
+  const jatahOpsTanpaJajan=storedJatahOpsTotal-jatahJajan; // dipeksa cocog total karo Rekap/PDF
   return{
     omzet:sum(data,COL.totalOmzet),omzetGas:sum(data,COL.omzetGas),omzetGalon:sum(data,COL.omzetGalon),
     jatahKulakan:sum(data,COL.jatahKulakan),realKulakan:sum(data,COL.realKulakan),
-    jatahOps:jatahOpsTanpaJajan,realOps:realOpsTanpaJajan,
-    jatahJajan:posAgg.realJajan.jatah,realJajan:posAgg.realJajan.real,
+    jatahOps:jatahOpsTanpaJajan,jatahOpsEstimasi:jatahOpsTanpaJajanEstimasi,realOps:realOpsTanpaJajan,
+    jatahJajan:jatahJajan,realJajan:posAgg.realJajan.real,
     jatahZakat:sum(data,COL.jatahZakat),realZakat:sum(data,COL.realZakat),
     jatahSetoran:sum(data,COL.jatahSetoran),realSetoran:sum(data,COL.realSetoran),
     shodaqoh:sum(data,COL.shodaqoh),labaBersih:sum(data,COL.labaBersih),
