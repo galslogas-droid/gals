@@ -370,6 +370,11 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
         </div></div>
       </div>
 
+      <div class="acc-section" id="accProduk">
+        <button type="button" class="acc-head" onclick="toggleAcc(this)"><span class="acc-head-title">🧴 Produk Lain (opsional)</span><span class="acc-chevron">▾</span></button>
+        <div class="acc-body"><div class="acc-body-inner" id="produkTerjualContainer"></div></div>
+      </div>
+
       <div class="acc-section" id="accOps">
         <button type="button" class="acc-head" onclick="toggleAcc(this)"><span class="acc-head-title">🔧 Realisasi Operasional</span><span class="acc-badge" id="opBadge">Jatah Rp0</span><span class="acc-chevron">▾</span></button>
         <div class="acc-body"><div class="acc-body-inner" id="opContainer"></div></div>
@@ -455,6 +460,13 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
     </div>
     <div class="table-card"><div class="table-responsive"><table><thead><tr><th>Tanggal</th><th>Jenis</th><th>Jumlah</th><th>Keterangan</th><th>Saldo</th><th>Aksi</th></tr></thead><tbody id="cadanganHistBody"></tbody></table></div></div>
 
+    <div class="section-title" style="margin-top:18px;"><div class="sicon">🧴</div><div><h2>Kelola Produk</h2><p>Produk fleksibel (kadhang-kadhang didol) — tambah/busak kapan wae, stok kacathet otomatis kaya gas/galon</p></div></div>
+    <div class="chart-card" style="margin-bottom:12px;">
+      <div id="produkKelolaList"></div>
+      <button class="btn" style="margin-top:8px;background:var(--surface2);color:var(--dark);" onclick="tambahBarisProduk()">➕ Tambah Produk</button>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="simpanProduk()">💾 Simpan Kabeh Produk</button>
+    </div>
+
     <div class="section-title" style="margin-top:18px;"><div class="sicon">⚙️</div><div><h2>Pengaturan Tarif</h2><p>Owahi yen ana rega/tarif sing pancen ganti</p></div></div>
     <div class="chart-card" style="margin-bottom:12px;">
       <b style="font-size:11px;color:var(--gray);">💰 Harga Jual (per tabung/galon)</b>
@@ -482,6 +494,7 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
         <div class="input-group"><label>Pemeliharaan /Galon</label><input type="number" id="tarif_jatah_pemeliharaanGalon" min="0"></div>
         <div class="input-group"><label>Tisu-Tutup /Galon</label><input type="number" id="tarif_jatah_tisuTutupGalon" min="0"></div>
         <div class="input-group"><label>Jajan (flat/hari)</label><input type="number" id="tarif_jatah_jajanFlat" min="0"></div>
+        <div class="input-group"><label>Biaya Admin (flat/hari)</label><input type="number" id="tarif_jatah_biayaAdminFlat" min="0"></div>
       </div>
       <button class="btn btn-primary" style="margin-top:10px;" onclick="simpanTarif()">💾 Simpan Tarif</button>
       <div style="font-size:10px;color:var(--gray);margin-top:6px;">Owahan mung mengaruhi transaksi ANYAR sabanjuré — data transaksi sing wis kasimpen ora melu diowahi.</div>
@@ -499,8 +512,22 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
       </div>
       <button class="btn btn-primary" style="margin-top:10px;" onclick="inputStok()">💾 Simpan Stok Masuk</button>
     </div>
+
+    <div class="section-title" style="margin-top:18px;"><div class="sicon">🧴</div><div><h2>Input Stok Produk Lain</h2><p>Kulakan barang fleksibel (mis. air mineral dus-dusan)</p></div></div>
+    <div class="chart-card" style="margin-bottom:12px;" id="stokProdukCard">
+      <div class="form-grid">
+        <div class="input-group"><label>📅 Tanggal</label><input type="date" id="tglStokProduk"></div>
+        <div class="input-group"><label>🏷️ Produk</label><select id="produkStokId"></select></div>
+        <div class="input-group"><label>📦 Satuan</label><select id="produkStokSatuan"><option value="pcs">Pcs</option><option value="dus">Dus</option></select></div>
+        <div class="input-group"><label>🔢 Jumlah</label><input type="number" id="produkStokQty" placeholder="0" min="0"></div>
+        <div class="input-group"><label>📝 Keterangan</label><input type="text" id="ketStokProduk" placeholder="🚛 Kulakan"></div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="inputStokProduk()">💾 Simpan Stok Produk Masuk</button>
+    </div>
+
     <div class="section-title"><div class="sicon">📊</div><div><h2>Prediksi Stok</h2></div></div>
     <div class="stok-grid2" id="stokPrediksiGrid"></div>
+    <div class="stok-grid2" id="stokProdukPrediksiGrid" style="margin-top:8px;"></div>
 
     <div class="section-title" style="margin-top:18px;"><div class="sicon">📋</div><div><h2>Riwayat Stok Masuk</h2><p>30 catetan pungkasan — koreksi yen ana sing salah input</p></div></div>
     <div class="table-card"><div class="table-responsive"><table><thead><tr><th>Tanggal</th><th>SKU</th><th>Jumlah</th><th>Keterangan</th><th id="stokHistActionHead" style="display:none;">Aksi</th></tr></thead><tbody id="stokHistBody"></tbody></table></div></div>
@@ -534,8 +561,9 @@ let USER_ROLE=localStorage.getItem('gals_role')||'';
 // dadi owahan tarif liwat Admin > Tarif melu katon ing kene, ora kepenthok statis.
 const HARGA={gas22:22000,gas23:23000,gasPink:125000,galon3k:3000,galon4k:4000,galon5k:5000};
 const KULAK={gasStd:15833,gasPink:110000};
-const JATAH={transportGas:400,transportGalon:500,wifiGas:500,opkirimGas:833,airGalon:500,listrikGalon:500,pemeliharaanGalon:500,tisuTutupGalon:500,jajanFlat:10000};
-const COL={id:0,tanggal:1,waktu:2,gas22:3,gas23:4,gasPink:5,galon3k:6,galon4k:7,galon5k:8,pemasukanLain:9,ketPemasukanLain:10,realTransport:11,catTransport:12,realWifi:13,catWifi:14,realOpkirimgas:15,catOpkirimgas:16,realAir:17,catAir:18,realListrik:19,catListrik:20,realPemeliharaan:21,catPemeliharaan:22,realTisuTutup:23,catTisuTutup:24,realJajan:25,catJajan:26,realKulakan:27,catKulakan:28,realZakat:29,catZakat:30,realSetoran:31,catSetoran:32,pengeluaranLain:33,catPengeluaranLain:34,shodaqoh:35,totalOmzet:36,omzetGas:37,omzetGalon:38,jatahKulakan:39,jatahOps:40,jatahZakat:41,jatahSetoran:42,totalReal:43,totalPengeluaran:44,labaBersih:45,status:46,createdAt:47,updatedAt:48,version:49,jatahOpsTransport:50,jatahOpsWifi:51,jatahOpsOpkirim:52,jatahOpsAir:53,jatahOpsListrik:54,jatahOpsPemeliharaan:55,jatahOpsTisuTutup:56,jatahOpsJajan:57,modalPemasukanLain:58};
+const JATAH={transportGas:400,transportGalon:500,wifiGas:500,opkirimGas:833,airGalon:500,listrikGalon:500,pemeliharaanGalon:500,tisuTutupGalon:500,jajanFlat:10000,biayaAdminFlat:5000};
+let PRODUK=[]; // katalog produk fleksibel, disinkron saka backend (syncProduk()) — lihat "Kelola Produk" di kaca Kas Admin
+const COL={id:0,tanggal:1,waktu:2,gas22:3,gas23:4,gasPink:5,galon3k:6,galon4k:7,galon5k:8,pemasukanLain:9,ketPemasukanLain:10,realTransport:11,catTransport:12,realWifi:13,catWifi:14,realOpkirimgas:15,catOpkirimgas:16,realAir:17,catAir:18,realListrik:19,catListrik:20,realPemeliharaan:21,catPemeliharaan:22,realTisuTutup:23,catTisuTutup:24,realJajan:25,catJajan:26,realKulakan:27,catKulakan:28,realZakat:29,catZakat:30,realSetoran:31,catSetoran:32,pengeluaranLain:33,catPengeluaranLain:34,shodaqoh:35,totalOmzet:36,omzetGas:37,omzetGalon:38,jatahKulakan:39,jatahOps:40,jatahZakat:41,jatahSetoran:42,totalReal:43,totalPengeluaran:44,labaBersih:45,status:46,createdAt:47,updatedAt:48,version:49,jatahOpsTransport:50,jatahOpsWifi:51,jatahOpsOpkirim:52,jatahOpsAir:53,jatahOpsListrik:54,jatahOpsPemeliharaan:55,jatahOpsTisuTutup:56,jatahOpsJajan:57,modalPemasukanLain:58,produkTerjualJson:59,realBiayaAdmin:60,catBiayaAdmin:61,jatahOpsBiayaAdmin:62};
 const POS=[
   {key:'realTransport',catKey:'catTransport',label:'🚚 Transport',jatahFn:(g,gl)=>(g*JATAH.transportGas)+(gl*JATAH.transportGalon),realCol:COL.realTransport,catCol:COL.catTransport,histCol:COL.jatahOpsTransport},
   {key:'realWifi',catKey:'catWifi',label:'🌐 Wifi',jatahFn:(g)=>g*JATAH.wifiGas,realCol:COL.realWifi,catCol:COL.catWifi,histCol:COL.jatahOpsWifi},
@@ -544,7 +572,8 @@ const POS=[
   {key:'realListrik',catKey:'catListrik',label:'⚡ Listrik',jatahFn:(_,gl)=>gl*JATAH.listrikGalon,realCol:COL.realListrik,catCol:COL.catListrik,histCol:COL.jatahOpsListrik},
   {key:'realPemeliharaan',catKey:'catPemeliharaan',label:'🔧 Pemeliharaan',jatahFn:(_,gl)=>gl*JATAH.pemeliharaanGalon,realCol:COL.realPemeliharaan,catCol:COL.catPemeliharaan,histCol:COL.jatahOpsPemeliharaan},
   {key:'realTisuTutup',catKey:'catTisuTutup',label:'🧻 Tutup & Tisu',jatahFn:(_,gl)=>gl*JATAH.tisuTutupGalon,realCol:COL.realTisuTutup,catCol:COL.catTisuTutup,histCol:COL.jatahOpsTisuTutup},
-  {key:'realJajan',catKey:'catJajan',label:'🟠 Jajan 2 Orang',jatahFn:()=>JATAH.jajanFlat,realCol:COL.realJajan,catCol:COL.catJajan,histCol:COL.jatahOpsJajan}
+  {key:'realJajan',catKey:'catJajan',label:'🟠 Jajan 2 Orang',jatahFn:()=>JATAH.jajanFlat,realCol:COL.realJajan,catCol:COL.catJajan,histCol:COL.jatahOpsJajan},
+  {key:'realBiayaAdmin',catKey:'catBiayaAdmin',label:'🧑‍💼 Biaya Admin',jatahFn:()=>JATAH.biayaAdminFlat,realCol:COL.realBiayaAdmin,catCol:COL.catBiayaAdmin,histCol:COL.jatahOpsBiayaAdmin}
 ];
 let allData=[],editId=null,currentPage='dashboardPage',stokSummary={},toastTimer=null;
 let chartInstances=[],chartTrend=null,chartKomposisi=null,chartForecast=null,currentAnalisisFilter='minggu';
@@ -592,8 +621,10 @@ function hitungFormula(d){
   const totalGalon=(d.galon3k||0)+(d.galon4k||0)+(d.galon5k||0);
   const omzetGas=(d.gas22||0)*HARGA.gas22+(d.gas23||0)*HARGA.gas23+(d.gasPink||0)*HARGA.gasPink;
   const omzetGalon=(d.galon3k||0)*HARGA.galon3k+(d.galon4k||0)*HARGA.galon4k+(d.galon5k||0)*HARGA.galon5k;
-  const totalOmzet=omzetGas+omzetGalon+(d.pemasukanLain||0);
-  const jatahKulakan=((d.gas22||0)+(d.gas23||0))*KULAK.gasStd+(d.gasPink||0)*KULAK.gasPink+(d.modalPemasukanLain||0);
+  let omzetProduk=0,modalProduk=0;
+  (d.produkTerjual||[]).forEach(it=>{const cat=PRODUK.find(x=>x.id===it.id);if(!cat)return;omzetProduk+=it.qty*Number(cat.hargaJualPcs);modalProduk+=it.qty*Number(cat.hargaBeliPcs);});
+  const totalOmzet=omzetGas+omzetGalon+(d.pemasukanLain||0)+omzetProduk;
+  const jatahKulakan=((d.gas22||0)+(d.gas23||0))*KULAK.gasStd+(d.gasPink||0)*KULAK.gasPink+(d.modalPemasukanLain||0)+modalProduk;
   let jatahOps=0;POS.forEach(p=>{jatahOps+=p.jatahFn(totalGas,totalGalon);});
   const shodaqoh=d.shodaqoh||0;
   const jatahZakat=Math.max(0,Math.round((totalOmzet-jatahKulakan)*2.5/100));
@@ -605,11 +636,12 @@ function hitungFormula(d){
   return{totalGas,totalGalon,omzetGas,omzetGalon,totalOmzet,jatahKulakan,jatahOps,jatahZakat,jatahSetoran,totalRealOps,totalPengeluaran,labaBersih};
 }
 function readFormAsData(){
-  const d={gas22:getNum('gas22'),gas23:getNum('gas23'),gasPink:getNum('gasPink'),galon3k:getNum('galon3k'),galon4k:getNum('galon4k'),galon5k:getNum('galon5k'),pemasukanLain:getNum('pemasukanLain'),modalPemasukanLain:getNum('modalPemasukanLain'),shodaqoh:getNum('shodaqoh'),realKulakan:getNum('realKulakan'),pengeluaranLain:getNum('pengeluaranLain')};
+  const d={gas22:getNum('gas22'),gas23:getNum('gas23'),gasPink:getNum('gasPink'),galon3k:getNum('galon3k'),galon4k:getNum('galon4k'),galon5k:getNum('galon5k'),pemasukanLain:getNum('pemasukanLain'),modalPemasukanLain:getNum('modalPemasukanLain'),shodaqoh:getNum('shodaqoh'),realKulakan:getNum('realKulakan'),pengeluaranLain:getNum('pengeluaranLain'),produkTerjual:readProdukTerjual()};
   POS.forEach(p=>{d[p.key]=getNum(p.key);});
   return d;
 }
 function updatePreview(){
+  PRODUK.forEach(p=>updateProdukSubtotal(p.id));
   const f=hitungFormula(readFormAsData());
   const box=document.getElementById('previewBox');
   if(box)box.innerHTML=[
@@ -681,7 +713,7 @@ function showMainPage(p){
   if(p==='rekapPage')renderTable();
   if(p==='analisisPage')renderAnalisis();
   if(p==='setoranPage')renderSetoran();
-  if(p==='kasAdminPage'){renderKasAdmin();loadCadangan();}
+  if(p==='kasAdminPage'){renderKasAdmin();loadCadangan();renderProdukKelola();}
   if(p==='stokPage')renderStokPage();
 }
 
@@ -713,12 +745,50 @@ function buildOpRows(data){
 function updateOpSisa(){const g=getNum('gas22')+getNum('gas23')+getNum('gasPink'),gl=getNum('galon3k')+getNum('galon4k')+getNum('galon5k');POS.forEach(p=>{const j=p.jatahFn(g,gl),r=getNum(p.key),sVal=j-r;const el=document.getElementById('sisa_'+p.key);if(el){el.textContent=sVal>=0?'+'+rupiah(sVal):rupiah(sVal);el.style.color=sVal>=0?'var(--success)':'var(--danger)';}});}
 function updateJatahDisplay(g,gl){POS.forEach(p=>{const j=p.jatahFn(g,gl);const el=document.getElementById('jatah_'+p.key);if(el)el.textContent=rupiah(j);});updateOpSisa();}
 
+/* ===================== PRODUK FLEKSIBEL (katalog admin-managed, tampil ing form harian) ===================== */
+function buildProdukRows(produkTerjual){
+  const cont=document.getElementById('produkTerjualContainer');if(!cont)return;
+  if(!PRODUK.length){cont.innerHTML='<p class="tiny muted">Durung ana produk. Tambahke liwat kaca Kas &gt; Kelola Produk.</p>';return;}
+  const byId={};(produkTerjual||[]).forEach(it=>{byId[it.id]=it.qty;});
+  cont.innerHTML=PRODUK.map(prod=>{
+    const qty=byId[prod.id]||0;
+    return `<div class="op-row">
+      <div class="op-row-top"><span class="op-row-label">${esc(prod.nama)}</span><span class="op-row-jatah">Rp${Number(prod.hargaJualPcs).toLocaleString('id-ID')}/pcs</span></div>
+      <div class="op-row-mid">
+        <button type="button" class="qty-btn" onclick="stepQty('produk_${prod.id}',-1)">−</button>
+        <input type="number" id="produk_${prod.id}" class="qty-input" value="${qty}" min="0" inputmode="numeric" oninput="updatePreview()">
+        <button type="button" class="qty-btn" onclick="stepQty('produk_${prod.id}',1)">+</button>
+        <span class="op-row-sisa" id="produkSubtotal_${prod.id}"></span>
+      </div>
+    </div>`;
+  }).join('');
+  PRODUK.forEach(prod=>updateProdukSubtotal(prod.id));
+}
+function updateProdukSubtotal(id){
+  const prod=PRODUK.find(x=>x.id===id);if(!prod)return;
+  const qty=getNum('produk_'+id);
+  const el=document.getElementById('produkSubtotal_'+id);
+  if(el)el.textContent=qty>0?rupiah(qty*Number(prod.hargaJualPcs)):'';
+}
+function readProdukTerjual(){
+  return PRODUK.map(p=>({id:p.id,qty:getNum('produk_'+p.id)})).filter(x=>x.qty>0);
+}
+async function syncProduk(){
+  try{
+    const r=await(await fetch(API_URL+'?action=getProduk&token='+TOKEN)).json();
+    PRODUK=Array.isArray(r)?r:[];
+  }catch(e){PRODUK=[];}
+  buildProdukRows(null);
+}
+
 function fillForm(r){
   editId=r[COL.id];const setVal=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val;};
   setVal('tanggal',tglStr(r));
   setVal('gas22',r[COL.gas22]||'');setVal('gas23',r[COL.gas23]||'');setVal('gasPink',r[COL.gasPink]||'');
   setVal('galon3k',r[COL.galon3k]||'');setVal('galon4k',r[COL.galon4k]||'');setVal('galon5k',r[COL.galon5k]||'');
   setVal('pemasukanLain',toRupiah(r[COL.pemasukanLain]));setVal('modalPemasukanLain',toRupiah(r[COL.modalPemasukanLain]));setVal('ketPemasukanLain',r[COL.ketPemasukanLain]||'');
+  let produkTerjualLama=[];try{produkTerjualLama=JSON.parse(r[COL.produkTerjualJson]||'[]');}catch(e){}
+  buildProdukRows(produkTerjualLama);
   const d={gas22:Number(r[COL.gas22]||0),gas23:Number(r[COL.gas23]||0),gasPink:Number(r[COL.gasPink]||0),galon3k:Number(r[COL.galon3k]||0),galon4k:Number(r[COL.galon4k]||0),galon5k:Number(r[COL.galon5k]||0)};
   POS.forEach(p=>{d[p.key]=Number(r[p.realCol]||0);d[p.catKey]=r[p.catCol]||'';});
   document.getElementById('opContainer').innerHTML=buildOpRows(d);
@@ -757,12 +827,13 @@ function onTanggalChange(){
 function resetForm(keepDate){
   editId=null;if(!keepDate){const tgl=document.getElementById('tanggal');if(tgl)tgl.value=getToday();}
   ['gas22','gas23','gasPink','galon3k','galon4k','galon5k','pemasukanLain','modalPemasukanLain','ketPemasukanLain','realKulakan','catKulakan','realZakat','catZakat','realSetoran','catSetoran','pengeluaranLain','catPengeluaranLain','shodaqoh'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('opContainer').innerHTML=buildOpRows(null);bindOpEvents();updatePreview();
+  document.getElementById('opContainer').innerHTML=buildOpRows(null);bindOpEvents();
+  buildProdukRows(null);updatePreview();
   document.getElementById('infoEdit').style.display='none';document.getElementById('btnHapusForm').style.display='none';
   document.getElementById('btnSimpan').textContent='💾 Simpan';document.getElementById('btnReset').style.display='block';
   const stk=document.getElementById('btnSimpanSticky');if(stk)stk.textContent='💾 Simpan';
   const dd=document.getElementById('pilihTanggal');if(dd)dd.value='';
-  ['accPemasukan','accOps','accKas'].forEach(id=>document.getElementById(id).classList.remove('open'));
+  ['accPemasukan','accProduk','accOps','accKas'].forEach(id=>document.getElementById(id).classList.remove('open'));
 }
 async function simpanData(){
   const tanggal=document.getElementById('tanggal')?.value||'';
@@ -776,6 +847,7 @@ async function simpanData(){
   d.append('tanggal',tanggal);d.append('gas22',getNum('gas22'));d.append('gas23',getNum('gas23'));d.append('gasPink',getNum('gasPink'));
   d.append('galon3k',getNum('galon3k'));d.append('galon4k',getNum('galon4k'));d.append('galon5k',getNum('galon5k'));
   d.append('pemasukanLain',getNum('pemasukanLain'));d.append('modalPemasukanLain',getNum('modalPemasukanLain'));d.append('ketPemasukanLain',document.getElementById('ketPemasukanLain')?.value||'');
+  d.append('produkTerjualJson',JSON.stringify(readProdukTerjual()));
   POS.forEach(p=>{d.append(p.key,getNum(p.key));d.append(p.catKey,document.getElementById(p.catKey)?.value||'');});
   d.append('realKulakan',getNum('realKulakan'));d.append('catKulakan',document.getElementById('catKulakan')?.value||'');
   d.append('realZakat',getNum('realZakat'));d.append('catZakat',document.getElementById('catZakat')?.value||'');
@@ -1004,6 +1076,49 @@ async function simpanTarif(){
   try{const r=await(await fetch(API_URL,{method:'POST',body:d})).json();toast(r.message||'OK');}catch(e){toast('❌ Gagal simpan tarif');}
 }
 
+/* ===================== KELOLA PRODUK (admin) ===================== */
+let produkDraft=[];
+function renderProdukKelola(){
+  if(USER_ROLE!=='admin')return;
+  produkDraft=PRODUK.map(p=>({...p}));
+  const list=document.getElementById('produkKelolaList');if(!list)return;
+  list.innerHTML=produkDraft.length?'':'<p class="tiny muted">Durung ana produk. Pencet "➕ Tambah Produk" kagem miwiti.</p>';
+  drawProdukKelola();
+}
+function drawProdukKelola(){
+  const list=document.getElementById('produkKelolaList');if(!list)return;
+  list.innerHTML=produkDraft.map((p,i)=>`
+    <div class="form-grid" style="border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px;">
+      <div class="input-group"><label>🏷️ Jeneng Produk</label><input type="text" value="${esc(p.nama)}" placeholder="mis. Air Mineral Kh-Q" oninput="produkDraft[${i}].nama=this.value">
+      </div>
+      <div class="input-group"><label>📦 Isi per Dus (pcs)</label><input type="number" min="1" value="${p.isiPerDus||1}" oninput="produkDraft[${i}].isiPerDus=Number(this.value)||1"></div>
+      <div class="input-group"><label>💰 Rega Jual /pcs</label><input type="number" min="0" value="${p.hargaJualPcs||''}" placeholder="0" oninput="produkDraft[${i}].hargaJualPcs=Number(this.value)||0"></div>
+      <div class="input-group"><label>🔵 Rega Beli /pcs</label><input type="number" min="0" value="${p.hargaBeliPcs||''}" placeholder="0" oninput="produkDraft[${i}].hargaBeliPcs=Number(this.value)||0"></div>
+      <button type="button" class="btn" style="grid-column:1/-1;background:var(--danger-bg,#fee2e2);color:var(--danger,#dc2626);" onclick="busakBarisProduk(${i})">🗑️ Busak Produk Iki</button>
+    </div>`).join('');
+}
+function tambahBarisProduk(){
+  produkDraft.push({id:'prod_'+Date.now()+Math.floor(Math.random()*1000), nama:'', isiPerDus:1, hargaJualPcs:0, hargaBeliPcs:0});
+  drawProdukKelola();
+}
+function busakBarisProduk(i){
+  if(!confirm('Busak produk iki? (riwayat stok/penjualan lawas produk iki tetep kesimpen)'))return;
+  produkDraft.splice(i,1);
+  drawProdukKelola();
+}
+async function simpanProduk(){
+  for(const p of produkDraft){
+    if(!p.nama.trim()){toast('⚠️ Jeneng produk ora oleh kosong');return;}
+    if(!(p.hargaJualPcs>0)){toast('⚠️ Rega jual "'+p.nama+'" kudu > 0');return;}
+  }
+  const d=new FormData();d.append('token',TOKEN);d.append('action','updateProduk');d.append('produkJson',JSON.stringify(produkDraft));
+  try{
+    const r=await(await fetch(API_URL,{method:'POST',body:d})).json();
+    toast(r.message||'OK');
+    if(r.success!==false){await syncProduk();renderProdukKelola();renderStokPage();}
+  }catch(e){toast('❌ Gagal simpan produk');}
+}
+
 /* ===================== STOK ===================== */
 async function inputStok(){
   const tgl=document.getElementById('tglStok')?.value;
@@ -1015,6 +1130,7 @@ async function inputStok(){
 }
 function renderStokPage(){
   const tgl=document.getElementById('tglStok');if(tgl&&!tgl.value)tgl.value=getToday();
+  const tglP=document.getElementById('tglStokProduk');if(tglP&&!tglP.value)tglP.value=getToday();
   const grid=document.getElementById('stokPrediksiGrid');if(!grid)return;
   const defs=[['GasStd','🔥 Gas 22K/23K'],['GasPink','💗 Gas Pink']];
   grid.innerHTML=defs.map(([sku,label])=>{
@@ -1022,6 +1138,43 @@ function renderStokPage(){
     const prediksiTxt=s.prediksiHabisHari===null?'-':(s.prediksiHabisHari<1?'< 1 hari':s.prediksiHabisHari.toFixed(1)+' hari');
     return `<div class="stok-card2"><h4>${label}</h4><div class="big" style="color:${s.status.color};">${s.stok}</div><div style="font-size:9px;color:var(--gray);margin:6px 0;">tabung tersisa</div><div style="font-size:10px;">Rata2 terjual: <b>${s.rataRataPerHari}/hari</b></div><div style="font-size:10px;margin-top:2px;">Prediksi habis: <b>${prediksiTxt}</b></div><div style="margin-top:8px;font-size:10px;font-weight:800;color:${s.status.color};">${s.status.label}</div></div>`;
   }).join('');
+
+  const produkCard=document.getElementById('stokProdukCard');
+  const sel=document.getElementById('produkStokId');
+  if(produkCard&&sel){
+    if(!PRODUK.length){
+      produkCard.innerHTML='<p class="tiny muted">Durung ana produk. Tambahke liwat kaca Kas &gt; Kelola Produk.</p>';
+    } else {
+      sel.innerHTML=PRODUK.map(p=>`<option value="${p.id}">${esc(p.nama)}</option>`).join('');
+    }
+  }
+  const gridP=document.getElementById('stokProdukPrediksiGrid');
+  if(gridP){
+    gridP.innerHTML=PRODUK.map(prod=>{
+      const s=stokSummary[prod.id]||{stok:0,rataRataPerHari:0,prediksiHabisHari:null,status:{label:'-',color:'var(--gray)'}};
+      const prediksiTxt=s.prediksiHabisHari===null?'-':(s.prediksiHabisHari<1?'< 1 hari':s.prediksiHabisHari.toFixed(1)+' hari');
+      const dus=prod.isiPerDus>1?` (${(s.stok/prod.isiPerDus).toFixed(1)} dus)`:'';
+      return `<div class="stok-card2"><h4>${esc(prod.nama)}</h4><div class="big" style="color:${s.status.color};">${s.stok}</div><div style="font-size:9px;color:var(--gray);margin:6px 0;">pcs tersisa${dus}</div><div style="font-size:10px;">Rata2 terjual: <b>${s.rataRataPerHari}/hari</b></div><div style="font-size:10px;margin-top:2px;">Prediksi habis: <b>${prediksiTxt}</b></div><div style="margin-top:8px;font-size:10px;font-weight:800;color:${s.status.color};">${s.status.label}</div></div>`;
+    }).join('');
+  }
+}
+async function inputStokProduk(){
+  const tgl=document.getElementById('tglStokProduk')?.value;
+  if(!tgl){toast('⚠️ Tanggal wajib diisi');return;}
+  const produkId=document.getElementById('produkStokId')?.value;
+  const satuan=document.getElementById('produkStokSatuan')?.value;
+  const qtyInput=getNum('produkStokQty');
+  if(!produkId||!(qtyInput>0)){toast('⚠️ Pilih produk lan isi jumlah');return;}
+  const prod=PRODUK.find(p=>p.id===produkId);
+  const qtyPcs=satuan==='dus'?qtyInput*(prod?.isiPerDus||1):qtyInput;
+  const d=new FormData();d.append('token',TOKEN);d.append('action','inputStok');d.append('tanggal',tgl);
+  d.append('produkId',produkId);d.append('produkQtyMasuk',qtyPcs);
+  d.append('ketStok',document.getElementById('ketStokProduk')?.value||'');
+  try{
+    const r=await(await fetch(API_URL,{method:'POST',body:d})).json();
+    toast(r.message||'OK');
+    if(r.success!==false){['produkStokQty','ketStokProduk'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});await loadAllData();}
+  }catch(e){toast('❌ Gagal simpan stok produk');}
 }
 let stokHistory=[];
 async function loadStokHistory(){
@@ -1036,8 +1189,10 @@ function renderStokHistory(){
   const isAdmin=USER_ROLE==='admin';
   document.getElementById('stokHistActionHead').style.display=isAdmin?'':'none';
   body.innerHTML=stokHistory.map(r=>{
+    const prod=PRODUK.find(p=>p.id===r.sku);
+    const skuLabel=prod?esc(prod.nama):r.sku;
     const aksi=isAdmin?`<span class="btn-edit" onclick="editStokMasukUI('${r.id}',${r.qty})" title="Koreksi jumlah">✏️</span><span class="btn-delete" onclick="hapusStokMasukUI('${r.id}')" title="Busak">🗑️</span>`:'';
-    return `<tr><td>${r.tanggal}</td><td>${r.sku}</td><td>${r.qty}</td><td>${r.keterangan||''}</td>${isAdmin?`<td>${aksi}</td>`:''}</tr>`;
+    return `<tr><td>${r.tanggal}</td><td>${skuLabel}</td><td>${r.qty}</td><td>${r.keterangan||''}</td>${isAdmin?`<td>${aksi}</td>`:''}</tr>`;
   }).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--gray);">Durung ana data</td></tr>';
 }
 async function editStokMasukUI(id,qtyLama){
@@ -1201,6 +1356,7 @@ async function startApp(){
   document.getElementById('bottomNav').innerHTML=buildBottomNav();
   document.getElementById('stickySummary').classList.add('show');
   await syncTarif();
+  await syncProduk();
   updatePreview();
   loadAllData();
 }
