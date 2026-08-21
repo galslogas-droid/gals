@@ -363,8 +363,10 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
       <div class="acc-section" id="accPemasukan">
         <button type="button" class="acc-head" onclick="toggleAcc(this)"><span class="acc-head-title">💵 Pemasukan Lain (opsional)</span><span class="acc-chevron">▾</span></button>
         <div class="acc-body"><div class="acc-body-inner form-grid">
-          <div class="input-group"><label>💵 Jumlah</label><input type="text" id="pemasukanLain" class="input-rupiah" placeholder="Rp 0"></div>
+          <div class="input-group"><label>💵 Jumlah (rega dodol)</label><input type="text" id="pemasukanLain" class="input-rupiah" placeholder="Rp 0"></div>
+          <div class="input-group"><label>🧾 Modal/Kulakan (rega tuku)</label><input type="text" id="modalPemasukanLain" class="input-rupiah" placeholder="Rp 0"></div>
           <div class="input-group"><label>📝 Keterangan</label><input type="text" id="ketPemasukanLain" placeholder="Keterangan"></div>
+          <p class="tiny muted" style="grid-column:1/-1;margin:2px 0 0">Yen dodolan barang kaya tutup/tisu/air mineral, isi loro-lorone: modal disisihake dhewe kanggo kulakan maneh, mung untunge sing melu Setoran.</p>
         </div></div>
       </div>
 
@@ -518,7 +520,7 @@ let USER_ROLE=localStorage.getItem('gals_role')||'';
 const HARGA={gas22:22000,gas23:23000,gasPink:125000,galon3k:3000,galon4k:4000,galon5k:5000};
 const KULAK={gasStd:15833,gasPink:110000};
 const JATAH={transportGas:400,transportGalon:500,wifiGas:500,opkirimGas:833,airGalon:500,listrikGalon:500,pemeliharaanGalon:500,tisuTutupGalon:500,jajanFlat:10000};
-const COL={id:0,tanggal:1,waktu:2,gas22:3,gas23:4,gasPink:5,galon3k:6,galon4k:7,galon5k:8,pemasukanLain:9,ketPemasukanLain:10,realTransport:11,catTransport:12,realWifi:13,catWifi:14,realOpkirimgas:15,catOpkirimgas:16,realAir:17,catAir:18,realListrik:19,catListrik:20,realPemeliharaan:21,catPemeliharaan:22,realTisuTutup:23,catTisuTutup:24,realJajan:25,catJajan:26,realKulakan:27,catKulakan:28,realZakat:29,catZakat:30,realSetoran:31,catSetoran:32,pengeluaranLain:33,catPengeluaranLain:34,shodaqoh:35,totalOmzet:36,omzetGas:37,omzetGalon:38,jatahKulakan:39,jatahOps:40,jatahZakat:41,jatahSetoran:42,totalReal:43,totalPengeluaran:44,labaBersih:45,status:46,createdAt:47,updatedAt:48,version:49,jatahOpsTransport:50,jatahOpsWifi:51,jatahOpsOpkirim:52,jatahOpsAir:53,jatahOpsListrik:54,jatahOpsPemeliharaan:55,jatahOpsTisuTutup:56,jatahOpsJajan:57};
+const COL={id:0,tanggal:1,waktu:2,gas22:3,gas23:4,gasPink:5,galon3k:6,galon4k:7,galon5k:8,pemasukanLain:9,ketPemasukanLain:10,realTransport:11,catTransport:12,realWifi:13,catWifi:14,realOpkirimgas:15,catOpkirimgas:16,realAir:17,catAir:18,realListrik:19,catListrik:20,realPemeliharaan:21,catPemeliharaan:22,realTisuTutup:23,catTisuTutup:24,realJajan:25,catJajan:26,realKulakan:27,catKulakan:28,realZakat:29,catZakat:30,realSetoran:31,catSetoran:32,pengeluaranLain:33,catPengeluaranLain:34,shodaqoh:35,totalOmzet:36,omzetGas:37,omzetGalon:38,jatahKulakan:39,jatahOps:40,jatahZakat:41,jatahSetoran:42,totalReal:43,totalPengeluaran:44,labaBersih:45,status:46,createdAt:47,updatedAt:48,version:49,jatahOpsTransport:50,jatahOpsWifi:51,jatahOpsOpkirim:52,jatahOpsAir:53,jatahOpsListrik:54,jatahOpsPemeliharaan:55,jatahOpsTisuTutup:56,jatahOpsJajan:57,modalPemasukanLain:58};
 const POS=[
   {key:'realTransport',catKey:'catTransport',label:'🚚 Transport',jatahFn:(g,gl)=>(g*JATAH.transportGas)+(gl*JATAH.transportGalon),realCol:COL.realTransport,catCol:COL.catTransport,histCol:COL.jatahOpsTransport},
   {key:'realWifi',catKey:'catWifi',label:'🌐 Wifi',jatahFn:(g)=>g*JATAH.wifiGas,realCol:COL.realWifi,catCol:COL.catWifi,histCol:COL.jatahOpsWifi},
@@ -576,7 +578,7 @@ function hitungFormula(d){
   const omzetGas=(d.gas22||0)*HARGA.gas22+(d.gas23||0)*HARGA.gas23+(d.gasPink||0)*HARGA.gasPink;
   const omzetGalon=(d.galon3k||0)*HARGA.galon3k+(d.galon4k||0)*HARGA.galon4k+(d.galon5k||0)*HARGA.galon5k;
   const totalOmzet=omzetGas+omzetGalon+(d.pemasukanLain||0);
-  const jatahKulakan=((d.gas22||0)+(d.gas23||0))*KULAK.gasStd+(d.gasPink||0)*KULAK.gasPink;
+  const jatahKulakan=((d.gas22||0)+(d.gas23||0))*KULAK.gasStd+(d.gasPink||0)*KULAK.gasPink+(d.modalPemasukanLain||0);
   let jatahOps=0;POS.forEach(p=>{jatahOps+=p.jatahFn(totalGas,totalGalon);});
   const shodaqoh=d.shodaqoh||0;
   const jatahZakat=Math.max(0,Math.round((totalOmzet-jatahKulakan)*2.5/100));
@@ -588,7 +590,7 @@ function hitungFormula(d){
   return{totalGas,totalGalon,omzetGas,omzetGalon,totalOmzet,jatahKulakan,jatahOps,jatahZakat,jatahSetoran,totalRealOps,totalPengeluaran,labaBersih};
 }
 function readFormAsData(){
-  const d={gas22:getNum('gas22'),gas23:getNum('gas23'),gasPink:getNum('gasPink'),galon3k:getNum('galon3k'),galon4k:getNum('galon4k'),galon5k:getNum('galon5k'),pemasukanLain:getNum('pemasukanLain'),shodaqoh:getNum('shodaqoh'),realKulakan:getNum('realKulakan'),pengeluaranLain:getNum('pengeluaranLain')};
+  const d={gas22:getNum('gas22'),gas23:getNum('gas23'),gasPink:getNum('gasPink'),galon3k:getNum('galon3k'),galon4k:getNum('galon4k'),galon5k:getNum('galon5k'),pemasukanLain:getNum('pemasukanLain'),modalPemasukanLain:getNum('modalPemasukanLain'),shodaqoh:getNum('shodaqoh'),realKulakan:getNum('realKulakan'),pengeluaranLain:getNum('pengeluaranLain')};
   POS.forEach(p=>{d[p.key]=getNum(p.key);});
   return d;
 }
@@ -701,7 +703,7 @@ function fillForm(r){
   setVal('tanggal',tglStr(r));
   setVal('gas22',r[COL.gas22]||'');setVal('gas23',r[COL.gas23]||'');setVal('gasPink',r[COL.gasPink]||'');
   setVal('galon3k',r[COL.galon3k]||'');setVal('galon4k',r[COL.galon4k]||'');setVal('galon5k',r[COL.galon5k]||'');
-  setVal('pemasukanLain',toRupiah(r[COL.pemasukanLain]));setVal('ketPemasukanLain',r[COL.ketPemasukanLain]||'');
+  setVal('pemasukanLain',toRupiah(r[COL.pemasukanLain]));setVal('modalPemasukanLain',toRupiah(r[COL.modalPemasukanLain]));setVal('ketPemasukanLain',r[COL.ketPemasukanLain]||'');
   const d={gas22:Number(r[COL.gas22]||0),gas23:Number(r[COL.gas23]||0),gasPink:Number(r[COL.gasPink]||0),galon3k:Number(r[COL.galon3k]||0),galon4k:Number(r[COL.galon4k]||0),galon5k:Number(r[COL.galon5k]||0)};
   POS.forEach(p=>{d[p.key]=Number(r[p.realCol]||0);d[p.catKey]=r[p.catCol]||'';});
   document.getElementById('opContainer').innerHTML=buildOpRows(d);
@@ -739,7 +741,7 @@ function onTanggalChange(){
 }
 function resetForm(keepDate){
   editId=null;if(!keepDate){const tgl=document.getElementById('tanggal');if(tgl)tgl.value=getToday();}
-  ['gas22','gas23','gasPink','galon3k','galon4k','galon5k','pemasukanLain','ketPemasukanLain','realKulakan','catKulakan','realZakat','catZakat','realSetoran','catSetoran','pengeluaranLain','catPengeluaranLain','shodaqoh'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['gas22','gas23','gasPink','galon3k','galon4k','galon5k','pemasukanLain','modalPemasukanLain','ketPemasukanLain','realKulakan','catKulakan','realZakat','catZakat','realSetoran','catSetoran','pengeluaranLain','catPengeluaranLain','shodaqoh'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('opContainer').innerHTML=buildOpRows(null);bindOpEvents();updatePreview();
   document.getElementById('infoEdit').style.display='none';document.getElementById('btnHapusForm').style.display='none';
   document.getElementById('btnSimpan').textContent='💾 Simpan';document.getElementById('btnReset').style.display='block';
@@ -758,7 +760,7 @@ async function simpanData(){
   if(editId){d.append('action','update');d.append('id',editId);}else d.append('action','simpan');
   d.append('tanggal',tanggal);d.append('gas22',getNum('gas22'));d.append('gas23',getNum('gas23'));d.append('gasPink',getNum('gasPink'));
   d.append('galon3k',getNum('galon3k'));d.append('galon4k',getNum('galon4k'));d.append('galon5k',getNum('galon5k'));
-  d.append('pemasukanLain',getNum('pemasukanLain'));d.append('ketPemasukanLain',document.getElementById('ketPemasukanLain')?.value||'');
+  d.append('pemasukanLain',getNum('pemasukanLain'));d.append('modalPemasukanLain',getNum('modalPemasukanLain'));d.append('ketPemasukanLain',document.getElementById('ketPemasukanLain')?.value||'');
   POS.forEach(p=>{d.append(p.key,getNum(p.key));d.append(p.catKey,document.getElementById(p.catKey)?.value||'');});
   d.append('realKulakan',getNum('realKulakan'));d.append('catKulakan',document.getElementById('catKulakan')?.value||'');
   d.append('realZakat',getNum('realZakat'));d.append('catZakat',document.getElementById('catZakat')?.value||'');
