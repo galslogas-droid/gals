@@ -440,6 +440,21 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
     <div class="section-title"><div class="sicon">💰</div><div><h2>Kas Admin <span class="acc-badge" id="kasAdminPeriodBadge">Semua data</span></h2><p id="totalKasAdmin">Total Sisa: Rp 0</p></div></div>
     <div class="table-card"><div class="table-responsive"><table><thead><tr><th>Pos</th><th>Jatah</th><th>Real</th><th>Sisa</th></tr></thead><tbody id="kasAdminBody"></tbody></table></div></div>
 
+    <div class="section-title" style="margin-top:18px;"><div class="sicon">🏦</div><div><h2>Dana Cadangan</h2><p>Dhuwit sing DUDU saka transaksi harian (mis. sisa kas lawas) — ora otomatis mlebu Setoran</p></div></div>
+    <div class="chart-card" style="margin-bottom:12px;">
+      <p style="font-size:20px;font-weight:800;margin:0 0 10px;">Saldo: <span id="cadanganSaldo">Rp0</span></p>
+      <div class="form-grid">
+        <div class="input-group"><label>📅 Tanggal</label><input type="date" id="tglCadangan"></div>
+        <div class="input-group"><label>↕️ Jenis</label>
+          <select id="jenisCadangan"><option value="masuk">Masuk (tambah cadangan)</option><option value="keluar">Keluar (dienggo/dicilikake)</option></select>
+        </div>
+        <div class="input-group"><label>💵 Jumlah</label><input type="text" id="jumlahCadangan" class="input-rupiah" placeholder="Rp 0"></div>
+        <div class="input-group"><label>📝 Keterangan</label><input type="text" id="ketCadangan" placeholder="Contoh: Sisa kas Juli sadurunge aplikasi"></div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="simpanCadangan()">💾 Simpan Dana Cadangan</button>
+    </div>
+    <div class="table-card"><div class="table-responsive"><table><thead><tr><th>Tanggal</th><th>Jenis</th><th>Jumlah</th><th>Keterangan</th><th>Saldo</th><th>Aksi</th></tr></thead><tbody id="cadanganHistBody"></tbody></table></div></div>
+
     <div class="section-title" style="margin-top:18px;"><div class="sicon">⚙️</div><div><h2>Pengaturan Tarif</h2><p>Owahi yen ana rega/tarif sing pancen ganti</p></div></div>
     <div class="chart-card" style="margin-bottom:12px;">
       <b style="font-size:11px;color:var(--gray);">💰 Harga Jual (per tabung/galon)</b>
@@ -666,7 +681,7 @@ function showMainPage(p){
   if(p==='rekapPage')renderTable();
   if(p==='analisisPage')renderAnalisis();
   if(p==='setoranPage')renderSetoran();
-  if(p==='kasAdminPage')renderKasAdmin();
+  if(p==='kasAdminPage'){renderKasAdmin();loadCadangan();}
   if(p==='stokPage')renderStokPage();
 }
 
@@ -1035,6 +1050,47 @@ async function hapusStokMasukUI(id){
   if(!confirm('Busak catetan stok masuk iki?'))return;
   const d=new FormData();d.append('token',TOKEN);d.append('action','hapusStokMasuk');d.append('id',id);
   try{const r=await(await fetch(API_URL,{method:'POST',body:d})).json();toast(r.message||'OK');if(r.success!==false){await loadStokHistory();await loadAllData();}}catch(e){toast('❌ Gagal mbusak stok');}
+}
+
+/* ===================== DANA CADANGAN =====================
+   Dhuwit sing DUDU asil transaksi harian (mis. sisa kas bulan sadurunge sing ora
+   ana datane) -- ora otomatis melu Setoran, admin isi/kelola manual. */
+let cadanganData={saldo:0,riwayat:[]};
+async function loadCadangan(){
+  if(USER_ROLE!=='admin')return;
+  try{
+    const r=await(await fetch(API_URL+'?action=getCadangan&token='+TOKEN)).json();
+    cadanganData=r&&r.riwayat?r:{saldo:0,riwayat:[]};
+  }catch(e){cadanganData={saldo:0,riwayat:[]};}
+  renderCadangan();
+}
+function renderCadangan(){
+  const tgl=document.getElementById('tglCadangan');if(tgl&&!tgl.value)tgl.value=getToday();
+  const sEl=document.getElementById('cadanganSaldo');if(sEl)sEl.textContent=rupiah(cadanganData.saldo);
+  const body=document.getElementById('cadanganHistBody');if(!body)return;
+  body.innerHTML=(cadanganData.riwayat||[]).map(r=>{
+    const tanda=r.jenis==='masuk'?'+':'−';
+    const warna=r.jenis==='masuk'?'var(--success)':'var(--danger)';
+    return `<tr><td>${r.tanggal}</td><td style="color:${warna};font-weight:700;">${tanda} ${r.jenis}</td><td>${rupiah(r.jumlah)}</td><td>${r.keterangan||''}</td><td>${rupiah(r.saldoSetelah)}</td><td><span class="btn-delete" onclick="hapusCadanganUI('${r.id}')" title="Busak">🗑️</span></td></tr>`;
+  }).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--gray);">Durung ana data</td></tr>';
+}
+async function simpanCadangan(){
+  const tgl=document.getElementById('tglCadangan')?.value;
+  if(!tgl){toast('⚠️ Tanggal wajib diisi');return;}
+  const d=new FormData();d.append('token',TOKEN);d.append('action','inputCadangan');d.append('tanggal',tgl);
+  d.append('jenis',document.getElementById('jenisCadangan')?.value||'masuk');
+  d.append('jumlah',getNum('jumlahCadangan'));
+  d.append('keterangan',document.getElementById('ketCadangan')?.value||'');
+  try{
+    const r=await(await fetch(API_URL,{method:'POST',body:d})).json();
+    toast(r.message||'OK');
+    if(r.success!==false){['jumlahCadangan','ketCadangan'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});await loadCadangan();}
+  }catch(e){toast('❌ Gagal simpan dana cadangan');}
+}
+async function hapusCadanganUI(id){
+  if(!confirm('Busak catetan dana cadangan iki?'))return;
+  const d=new FormData();d.append('token',TOKEN);d.append('action','hapusCadangan');d.append('id',id);
+  try{const r=await(await fetch(API_URL,{method:'POST',body:d})).json();toast(r.message||'OK');if(r.success!==false)await loadCadangan();}catch(e){toast('❌ Gagal mbusak dana cadangan');}
 }
 
 /* ===================== GRAFIK ===================== */
