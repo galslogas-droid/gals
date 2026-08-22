@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>✨ GALS NextGen v6.3 • Dashboard</title>
+<title>✨ GALS NextGen v6.3 • Beranda</title>
 <meta name="theme-color" content="#0f766e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -46,6 +46,53 @@ body { font-family: 'Inter', sans-serif; background: linear-gradient(180deg, rgb
 .floating-total { background: var(--glass); padding: 10px 14px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; min-width: 0; }
 .floating-total small { font-size: 10px; color: var(--gray); font-weight: 700; }
 .floating-total strong { font-size: 18px; font-weight: 800; color: var(--success); overflow-wrap: break-word; }
+/* --- Tahap 2 redesign: Beranda hierarchy (ringkesan hari ini > KPI > status bisnis > aksi cepet > alert) --- */
+.hero-card { background: linear-gradient(135deg, var(--primary), var(--primary2)); border-radius: var(--radius-xl); padding: 18px 18px 20px; color: #fff; margin-bottom: 12px; position: relative; overflow: hidden; }
+.hero-card-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; opacity: .85; display: flex; align-items: center; gap: 6px; }
+.hero-card-value { font-size: 30px; font-weight: 900; margin-top: 6px; overflow-wrap: break-word; }
+.hero-trend { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; margin-top: 8px; padding: 4px 9px; border-radius: 999px; background: rgba(255,255,255,.18); }
+.hero-trend.up { color: #bbf7d0; } .hero-trend.down { color: #fecaca; } .hero-trend.flat { color: #e2e8f0; }
+.kpi-ringkes-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
+@media(max-width:380px){ .kpi-ringkes-grid{ grid-template-columns: 1fr; } }
+.kpi-ringkes-card { background: var(--glass); border-radius: var(--radius-md); padding: 10px; box-shadow: var(--shadow); border: 1px solid var(--glass-border); text-align: center; min-width: 0; }
+.kpi-ringkes-card .kr-label { font-size: 9px; color: var(--gray); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+.kpi-ringkes-card .kr-value { font-size: 14px; font-weight: 800; overflow-wrap: break-word; }
+.status-mini-card { background: var(--glass); border-radius: var(--radius-lg); padding: 14px; box-shadow: var(--shadow); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 12px; margin-bottom: 12px; cursor: pointer; }
+.status-mini-ring { width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; position: relative; }
+.status-mini-ring::before { content: ''; position: absolute; width: 40px; height: 40px; background: var(--white); border-radius: 50%; }
+.status-mini-ring b { position: relative; z-index: 2; font-size: 14px; font-weight: 900; color: var(--dark); }
+.status-mini-body { flex: 1; min-width: 0; }
+.status-mini-body h4 { font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+.status-mini-body p { font-size: 9px; color: var(--gray); margin-top: 2px; }
+.status-mini-body .sm-link { font-size: 9px; font-weight: 800; color: var(--primary); margin-top: 4px; display: inline-block; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+.quick-actions-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+@media(max-width:380px){ .quick-actions-row{ grid-template-columns: 1fr; } }
+.qa-btn { border: none; border-radius: var(--radius-md); padding: 12px 8px; font-family: inherit; font-weight: 800; font-size: 11px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.qa-btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary2)); color: #fff; }
+.qa-btn.secondary { background: var(--glass); color: var(--dark); border: 1px solid var(--glass-border); box-shadow: var(--shadow); }
+.qa-btn:active { transform: scale(.96); }
+.alert-card { background: #fef3c7; border: 1px solid #fde68a; border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+[data-theme="dark"] .alert-card { background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.3); }
+.alert-card .alert-text { flex: 1; font-size: 11px; font-weight: 700; color: #92400e; }
+[data-theme="dark"] .alert-card .alert-text { color: #fbbf24; }
+.alert-card button { border: none; background: #f59e0b; color: #fff; font-size: 10px; font-weight: 800; padding: 6px 10px; border-radius: 8px; cursor: pointer; white-space: nowrap; font-family: inherit; }
+.secondary-label { font-size: 10px; font-weight: 800; color: var(--gray); text-transform: uppercase; letter-spacing: .04em; margin: 18px 2px 8px; display: flex; align-items: center; gap: 6px; }
+.tiny { font-size: 10px; line-height: 1.5; }
+.muted { color: var(--gray); }
+/* --- Tahap 2b: Rekap Transaksi dados kartu (ganti tabel 10 kolom sing angel diwaca ing HP) --- */
+.tx-list { display: flex; flex-direction: column; gap: 10px; }
+.tx-card { background: var(--glass); border-radius: var(--radius-lg); padding: 14px; box-shadow: var(--shadow); border: 1px solid var(--glass-border); min-width: 0; }
+.tx-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.tx-date { font-size: 12px; font-weight: 800; }
+.tx-summary { font-size: 10px; color: var(--gray); margin-bottom: 10px; }
+.tx-metrics { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; margin-bottom: 10px; }
+@media(max-width:480px){ .tx-metrics{ grid-template-columns: repeat(3,1fr); } }
+.tx-metrics div { text-align: center; min-width: 0; }
+.tx-metrics small { display: block; font-size: 8px; color: var(--gray); text-transform: uppercase; font-weight: 700; margin-bottom: 2px; }
+.tx-metrics b { font-size: 10px; font-weight: 800; overflow-wrap: break-word; }
+.tx-actions { display: flex; justify-content: flex-end; gap: 6px; padding-top: 8px; border-top: 1px solid var(--border); }
+.tx-empty { text-align: center; padding: 40px; color: var(--gray); font-size: 11px; }
 .top-info { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 4px; }
 @media(max-width:480px){ .top-info { grid-template-columns: repeat(2,1fr); gap: 6px; } }
 @media(max-width:340px){ .top-info { grid-template-columns: 1fr; } }
@@ -80,7 +127,10 @@ body { font-family: 'Inter', sans-serif; background: linear-gradient(180deg, rgb
 @media(max-width:340px){ .stats-grid { grid-template-columns: 1fr; } }
 .stat-card { background: var(--glass); border-radius: var(--radius-lg); padding: 16px; border-left: 4px solid var(--primary); box-shadow: var(--shadow); cursor: pointer; border-top: 1px solid var(--glass-border); border-right: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); position: relative; overflow: hidden; min-width: 0; }
 .stat-card .card-icon-bg { position: absolute; right: 10px; top: 6px; font-size: 40px; opacity: 0.06; pointer-events: none; }
-.stat-title { font-size: 9px; color: var(--gray); text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.stat-title { font-size: 9px; color: var(--gray); text-transform: uppercase; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
+.stat-title svg { flex-shrink: 0; }
+label svg,button svg,h3 svg,b svg,small svg,.acc-head-title svg,.kpi-group-label svg,.hero-badge svg{vertical-align:-3px;margin-right:3px;}
+.btn-edit svg,.btn-delete svg{vertical-align:middle;margin-right:0;}
 .stat-value { font-size: 17px; font-weight: 800; overflow-wrap: break-word; }
 .stat-sub { margin-top: 3px; font-size: 9px; color: var(--gray); overflow-wrap: break-word; }
 .badge { display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 999px; font-size: 8px; font-weight: 700; margin-top: 6px; }
@@ -105,8 +155,8 @@ th { padding: 10px 8px; text-align: left; font-size: 9px; font-weight: 700; text
 td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; white-space: nowrap; }
 .pill { padding: 3px 7px; border-radius: 999px; font-size: 8px; font-weight: 700; display: inline-block; }
 .pill-up { background: #dcfce7; color: #166534; } .pill-down { background: #fee2e2; color: #991b1b; }
-.btn-edit { background: var(--warning); padding: 4px 9px; border-radius: 6px; cursor: pointer; color: #fff; font-size: 9px; margin-right: 3px; border: none; }
-.btn-delete { background: var(--danger); padding: 4px 9px; border-radius: 6px; cursor: pointer; color: #fff; font-size: 9px; border: none; }
+.btn-edit { background: var(--warning); padding: 4px 9px; border-radius: 6px; cursor: pointer; color: #fff; font-size: 9px; margin-right: 3px; border: none; display: inline-flex; align-items: center; justify-content: center; }
+.btn-delete { background: var(--danger); padding: 4px 9px; border-radius: 6px; cursor: pointer; color: #fff; font-size: 9px; border: none; display: inline-flex; align-items: center; justify-content: center; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
 @media(max-width:340px){ .form-grid { grid-template-columns: 1fr; } }
 @media(min-width:768px){ .form-grid { grid-template-columns: repeat(3,1fr); } }
@@ -151,7 +201,8 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
 .op-row { padding: 10px 0; border-bottom: 1px solid var(--border); }
 .op-row:last-child { border-bottom: none; }
 .op-row-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
-.op-row-label { font-size: 11px; font-weight: 700; }
+.op-row-label { font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; vertical-align: middle; }
+.op-row-label svg { flex-shrink: 0; }
 .op-row-jatah { font-size: 9px; color: var(--gray); white-space: nowrap; }
 .op-row-mid { display: flex; gap: 8px; align-items: center; }
 .op-row-mid .input-rupiah { flex: 1; min-width: 0; }
@@ -295,8 +346,8 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
       style="width:100%;margin-top:6px;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#0f766e,#115e59);color:#fff;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;">Mlebet</button>
   </div>
 </div>
-<button class="dark-toggle" onclick="toggleDarkMode()" id="darkBtn">🌙</button>
-<button class="dark-toggle" onclick="doLogout()" id="logoutBtn" style="right:54px;display:none;" title="Metu">🚪</button>
+<button class="dark-toggle" onclick="toggleDarkMode()" id="darkBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.2A8.4 8.4 0 1 1 9.8 4a7 7 0 0 0 10.2 10.2Z"/></svg></button>
+<button class="dark-toggle" onclick="doLogout()" id="logoutBtn" style="right:54px;display:none;" title="Metu"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
 <header class="header">
   <div class="header-content">
     <div style="display:flex;align-items:center;gap:10px;">
@@ -307,53 +358,66 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
   </div>
 </header>
 <div class="container">
-  <div class="floating-total" id="floatingTotal"><small>💰 Omzet Hari Ini</small><strong id="floatingTotalVal">Rp 0</strong></div>
-  <div class="kpi-group-label">📊 Ringkesan Periode</div>
-  <div class="top-info" id="topInfo"></div>
-  <div class="kpi-group-label">⛽ Stok Gas</div>
-  <div class="stok-row">
-    <div class="kpi-card kpi-orange"><div class="kpi-icon">🔥</div><div class="kpi-body"><div class="kpi-label">Gas 22K/23K</div><div class="kpi-value" id="stokStdTop">-</div></div></div>
-    <div class="kpi-card kpi-pink"><div class="kpi-icon">💗</div><div class="kpi-body"><div class="kpi-label">Gas Pink</div><div class="kpi-value" id="stokPinkTop">-</div></div></div>
+  <div class="hero-card">
+    <div class="hero-card-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="14" rx="2.5"/><path d="M2.5 10.5h19"/><circle cx="17" cy="15" r="1.3" fill="currentColor" stroke="none"/></svg> Omzet Hari Ini</div>
+    <div class="hero-card-value" id="floatingTotalVal">Rp 0</div>
+    <div class="hero-trend flat" id="heroTrend" style="display:none;"></div>
   </div>
-  <div class="kpi-group-label">💧 Penjualan Galon</div>
+  <div class="kpi-ringkes-grid" id="kpiRingkesHariIni"></div>
+  <div class="status-mini-card" id="statusBisnisMini" onclick="showMainPage('analisisPage')"></div>
+  <div class="quick-actions-row">
+    <button class="qa-btn primary" onclick="scrollToInputForm()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Catat Penjualan</button>
+    <button class="qa-btn secondary" onclick="showMainPage('stokPage')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7.5 12 3 3 7.5v9L12 21l9-4.5Z"/><path d="M3 7.5 12 12l9-4.5"/><path d="M12 12v9"/></svg> Stok</button>
+    <button class="qa-btn secondary" onclick="showMainPage('rekapPage')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.6" cy="6" r="0.9" fill="currentColor" stroke="none"/><circle cx="3.6" cy="12" r="0.9" fill="currentColor" stroke="none"/><circle cx="3.6" cy="18" r="0.9" fill="currentColor" stroke="none"/></svg> Rekap</button>
+  </div>
+  <div id="alertBanner"></div>
+  <div class="secondary-label" style="margin-top:22px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.6" cy="6" r="0.9" fill="currentColor" stroke="none"/><circle cx="3.6" cy="12" r="0.9" fill="currentColor" stroke="none"/><circle cx="3.6" cy="18" r="0.9" fill="currentColor" stroke="none"/></svg> Detail & Riwayat</div>
+  <div class="kpi-group-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="20" x2="5" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="19" y1="20" x2="19" y2="14"/></svg> Ringkesan Periode</div>
+  <div class="top-info" id="topInfo"></div>
+  <div class="kpi-group-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5a2.5 2.5 0 0 0 5 0c0-1.4-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7.5 7.5 0 1 1-15 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 1 3Z"/></svg> Stok Gas</div>
+  <div class="stok-row">
+    <div class="kpi-card kpi-orange"><div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5a2.5 2.5 0 0 0 5 0c0-1.4-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7.5 7.5 0 1 1-15 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 1 3Z"/></svg></div><div class="kpi-body"><div class="kpi-label">Gas 22K/23K</div><div class="kpi-value" id="stokStdTop">-</div></div></div>
+    <div class="kpi-card kpi-pink"><div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.2-4.4-9.7-9A5.4 5.4 0 0 1 12 6.2 5.4 5.4 0 0 1 21.7 12c-2.5 4.6-9.7 9-9.7 9Z"/></svg></div><div class="kpi-body"><div class="kpi-label">Gas Pink</div><div class="kpi-value" id="stokPinkTop">-</div></div></div>
+  </div>
+  <div class="kpi-group-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s7 8.4 7 13.2A7 7 0 0 1 5 15.2C5 10.4 12 2 12 2Z"/></svg> Penjualan Galon</div>
   <div class="galon-summary" id="galonSummary">
-    <div class="kpi-card kpi-blue"><div class="kpi-icon">💧</div><div class="kpi-body"><div class="kpi-label">Hari Ini</div><div class="kpi-value" id="galonHari">0</div></div></div>
-    <div class="kpi-card kpi-blue"><div class="kpi-icon">📅</div><div class="kpi-body"><div class="kpi-label">Minggu Ini</div><div class="kpi-value" id="galonMinggu">0</div></div></div>
-    <div class="kpi-card kpi-blue"><div class="kpi-icon">📆</div><div class="kpi-body"><div class="kpi-label">Bulan Ini</div><div class="kpi-value" id="galonBulan">0</div></div></div>
-    <div class="kpi-card kpi-blue"><div class="kpi-icon">📊</div><div class="kpi-body"><div class="kpi-label">Tahun Ini</div><div class="kpi-value" id="galonTahun">0</div></div></div>
+    <div class="kpi-card kpi-blue"><div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s7 8.4 7 13.2A7 7 0 0 1 5 15.2C5 10.4 12 2 12 2Z"/></svg></div><div class="kpi-body"><div class="kpi-label">Hari Ini</div><div class="kpi-value" id="galonHari">0</div></div></div>
+    <div class="kpi-card kpi-blue"><div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16.5" rx="2"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="kpi-body"><div class="kpi-label">Minggu Ini</div><div class="kpi-value" id="galonMinggu">0</div></div></div>
+    <div class="kpi-card kpi-blue"><div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16.5" rx="2"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="kpi-body"><div class="kpi-label">Bulan Ini</div><div class="kpi-value" id="galonBulan">0</div></div></div>
+    <div class="kpi-card kpi-blue"><div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="20" x2="5" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="19" y1="20" x2="19" y2="14"/></svg></div><div class="kpi-body"><div class="kpi-label">Tahun Ini</div><div class="kpi-value" id="galonTahun">0</div></div></div>
   </div>
 
   <div id="dashboardPage">
-    <div class="section-title"><div class="sicon">🏠</div><div><h2>Dashboard</h2><p id="filterLabel">Semua data</p></div></div>
+    <div class="section-title"><div class="sicon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg></div><div><h2>Beranda</h2><p id="filterLabel">Kabeh data</p></div></div>
     <div class="filter-row" style="margin-bottom:16px;">
-      <button class="filter-btn active" onclick="setFilter('semua',this)">📋 Semua</button>
-      <button class="filter-btn" onclick="setFilter('hari',this)">📅 Hari Ini</button>
-      <button class="filter-btn" onclick="setFilter('minggu',this)">📆 Minggu Ini</button>
-      <button class="filter-btn" onclick="setFilter('bulan',this)">📊 Bulan Ini</button>
-      <button class="filter-btn" id="btnFilterCustom" onclick="setFilter('custom',this)">🗓️ Tanggal Tartamtu</button>
+      <button class="filter-btn active" onclick="setFilter('semua',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.6" cy="6" r="0.9" fill="currentColor" stroke="none"/><circle cx="3.6" cy="12" r="0.9" fill="currentColor" stroke="none"/><circle cx="3.6" cy="18" r="0.9" fill="currentColor" stroke="none"/></svg> Kabeh</button>
+      <button class="filter-btn" onclick="setFilter('hari',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16.5" rx="2"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Dina Iki</button>
+      <button class="filter-btn" onclick="setFilter('minggu',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16.5" rx="2"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Minggu Iki</button>
+      <button class="filter-btn" onclick="setFilter('bulan',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16.5" rx="2"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Wulan Iki</button>
+      <button class="filter-btn" id="btnFilterCustom" onclick="setFilter('custom',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16.5" rx="2"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Tanggal Tartamtu</button>
     </div>
     <div id="customDateRow" style="display:none;gap:8px;align-items:end;margin:-8px 0 16px;flex-wrap:wrap;">
       <div class="input-group" style="flex:1;min-width:120px;"><label>Saking tanggal</label><input type="date" id="filterMulai" onchange="applyCustomFilter()"></div>
       <div class="input-group" style="flex:1;min-width:120px;"><label>Dumugi tanggal</label><input type="date" id="filterAkhir" onchange="applyCustomFilter()"></div>
-      <button class="filter-btn" style="height:37px;flex-shrink:0;" onclick="applyCustomFilter()">✅ Terapaken</button>
+      <button class="filter-btn" style="height:37px;flex-shrink:0;" onclick="applyCustomFilter()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="8 12.5 11 15.5 16 9"/></svg> Terapaken</button>
     </div>
     <div class="stats-grid" id="statContainer"></div>
-    <div class="section-title"><div class="sicon">📝</div><div><h2>Input Penjualan</h2><p>Isi jumlah terjual, sisane opsional</p></div></div>
+    <div class="section-title" id="inputPenjualanSection"><div class="sicon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div><div><h2>Input Dodolan</h2><p>Isi jumlah kang didol, sisane opsional</p></div></div>
     <div class="chart-card" style="margin-bottom:80px;">
       <div class="info-edit" id="infoEdit">⚡ Mode Edit Aktif — data tanggal iki wis ana, owahan bakal nimpa data lawas</div>
       <div class="form-grid">
-        <div class="input-group"><label>📅 Tanggal</label><input type="date" id="tanggal" onchange="onTanggalChange()"></div>
-        <div class="input-group"><label>🔍 Buka data tanggal lain</label><select id="pilihTanggal" onchange="loadByTanggal()"><option value="">-- Hari ini --</option></select></div>
+        <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16.5" rx="2"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Tanggal</label><input type="date" id="tanggal" onchange="onTanggalChange()"></div>
+        <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="20" y1="20" x2="15.3" y2="15.3"/></svg> Buka data tanggal lain</label><select id="pilihTanggal" onchange="loadByTanggal()"><option value="">-- Hari ini --</option></select></div>
       </div>
 
-      <h3 style="font-size:11px;margin:14px 0 4px;">🔥 Gas Terjual</h3>
+      <h3 style="font-size:11px;margin:14px 0 4px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5a2.5 2.5 0 0 0 5 0c0-1.4-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7.5 7.5 0 1 1-15 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 1 3Z"/></svg> Gas Terjual</h3>
       <div class="qty-grid">
         <div class="qty-card"><div class="qty-label">Gas 22K<span class="qty-price">Rp22.000</span></div><div class="qty-control"><button type="button" class="qty-btn" onclick="stepQty('gas22',-1)">−</button><input type="number" id="gas22" class="qty-input" value="0" min="0" inputmode="numeric"><button type="button" class="qty-btn" onclick="stepQty('gas22',1)">+</button></div></div>
         <div class="qty-card"><div class="qty-label">Gas 23K<span class="qty-price">Rp23.000</span></div><div class="qty-control"><button type="button" class="qty-btn" onclick="stepQty('gas23',-1)">−</button><input type="number" id="gas23" class="qty-input" value="0" min="0" inputmode="numeric"><button type="button" class="qty-btn" onclick="stepQty('gas23',1)">+</button></div></div>
         <div class="qty-card"><div class="qty-label">Gas Pink<span class="qty-price">Rp125.000</span></div><div class="qty-control"><button type="button" class="qty-btn" onclick="stepQty('gasPink',-1)">−</button><input type="number" id="gasPink" class="qty-input" value="0" min="0" inputmode="numeric"><button type="button" class="qty-btn" onclick="stepQty('gasPink',1)">+</button></div></div>
       </div>
 
-      <h3 style="font-size:11px;margin:14px 0 4px;">💧 Galon Terjual</h3>
+      <h3 style="font-size:11px;margin:14px 0 4px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s7 8.4 7 13.2A7 7 0 0 1 5 15.2C5 10.4 12 2 12 2Z"/></svg> Galon Terjual</h3>
       <div class="qty-grid">
         <div class="qty-card"><div class="qty-label">Galon 3K<span class="qty-price">Rp3.000</span></div><div class="qty-control"><button type="button" class="qty-btn" onclick="stepQty('galon3k',-1)">−</button><input type="number" id="galon3k" class="qty-input" value="0" min="0" inputmode="numeric"><button type="button" class="qty-btn" onclick="stepQty('galon3k',1)">+</button></div></div>
         <div class="qty-card"><div class="qty-label">Galon 4K<span class="qty-price">Rp4.000</span></div><div class="qty-control"><button type="button" class="qty-btn" onclick="stepQty('galon4k',-1)">−</button><input type="number" id="galon4k" class="qty-input" value="0" min="0" inputmode="numeric"><button type="button" class="qty-btn" onclick="stepQty('galon4k',1)">+</button></div></div>
@@ -361,64 +425,64 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
       </div>
 
       <div class="acc-section" id="accPemasukan">
-        <button type="button" class="acc-head" onclick="toggleAcc(this)"><span class="acc-head-title">💵 Pemasukan Lain (opsional)</span><span class="acc-chevron">▾</span></button>
+        <button type="button" class="acc-head" onclick="toggleAcc(this)"><span class="acc-head-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><line x1="6" y1="9.5" x2="6" y2="9.51"/><line x1="18" y1="14.5" x2="18" y2="14.51"/></svg> Pemasukan Lain (opsional)</span><span class="acc-chevron">▾</span></button>
         <div class="acc-body"><div class="acc-body-inner form-grid">
-          <div class="input-group"><label>💵 Jumlah (rega dodol)</label><input type="text" id="pemasukanLain" class="input-rupiah" placeholder="Rp 0"></div>
-          <div class="input-group"><label>🧾 Modal/Kulakan (rega tuku)</label><input type="text" id="modalPemasukanLain" class="input-rupiah" placeholder="Rp 0"></div>
-          <div class="input-group"><label>📝 Keterangan</label><input type="text" id="ketPemasukanLain" placeholder="Keterangan"></div>
+          <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><line x1="6" y1="9.5" x2="6" y2="9.51"/><line x1="18" y1="14.5" x2="18" y2="14.51"/></svg> Jumlah (rega dodol)</label><input type="text" id="pemasukanLain" class="input-rupiah" placeholder="Rp 0"></div>
+          <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v19l-3-2-3 2-3-2-3 2Z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/></svg> Modal/Kulakan (rega tuku)</label><input type="text" id="modalPemasukanLain" class="input-rupiah" placeholder="Rp 0"></div>
+          <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Katrangan</label><input type="text" id="ketPemasukanLain" placeholder="Katrangan"></div>
           <p class="tiny muted" style="grid-column:1/-1;margin:2px 0 0">Yen dodolan barang kaya tutup/tisu/air mineral, isi loro-lorone: modal disisihake dhewe kanggo kulakan maneh, mung untunge sing melu Setoran.</p>
         </div></div>
       </div>
 
       <div class="acc-section" id="accProduk">
-        <button type="button" class="acc-head" onclick="toggleAcc(this)"><span class="acc-head-title">🧴 Produk Lain (opsional)</span><span class="acc-chevron">▾</span></button>
+        <button type="button" class="acc-head" onclick="toggleAcc(this)"><span class="acc-head-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2h4"/><path d="M10 2v4.5L7.5 10v10a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5V10L14 6.5V2"/></svg> Produk Lain (opsional)</span><span class="acc-chevron">▾</span></button>
         <div class="acc-body"><div class="acc-body-inner" id="produkTerjualContainer"></div></div>
       </div>
 
       <div class="acc-section" id="accOps">
-        <button type="button" class="acc-head" onclick="toggleAcc(this)"><span class="acc-head-title">🔧 Realisasi Operasional</span><span class="acc-badge" id="opBadge">Jatah Rp0</span><span class="acc-chevron">▾</span></button>
+        <button type="button" class="acc-head" onclick="toggleAcc(this)"><span class="acc-head-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 1 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4L14.5 12l-2.5-2.5Z"/></svg> Realisasi Operasional</span><span class="acc-badge" id="opBadge">Jatah Rp0</span><span class="acc-chevron">▾</span></button>
         <div class="acc-body"><div class="acc-body-inner" id="opContainer"></div></div>
       </div>
 
       <div class="acc-section" id="accKas">
-        <button type="button" class="acc-head" onclick="toggleAcc(this)"><span class="acc-head-title">🏦 Kulakan · Zakat · Setoran · Shodaqoh</span><span class="acc-chevron">▾</span></button>
+        <button type="button" class="acc-head" onclick="toggleAcc(this)"><span class="acc-head-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="21" x2="21" y2="21"/><path d="M3 10 12 4l9 6"/><line x1="5" y1="10" x2="5" y2="21"/><line x1="9" y1="10" x2="9" y2="21"/><line x1="15" y1="10" x2="15" y2="21"/><line x1="19" y1="10" x2="19" y2="21"/></svg> Kulakan · Zakat · Setoran · Shodaqoh</span><span class="acc-chevron">▾</span></button>
         <div class="acc-body"><div class="acc-body-inner form-grid">
-          <div class="input-group"><label>🔵 Real Kulakan</label><input type="text" id="realKulakan" class="input-rupiah" placeholder="Rp 0"></div>
-          <div class="input-group"><label>📝 Catatan</label><input type="text" id="catKulakan" placeholder="Keterangan"></div>
-          <div class="input-group"><label>🕌 Real Zakat</label><input type="text" id="realZakat" class="input-rupiah" placeholder="Rp 0"></div>
-          <div class="input-group"><label>📝 Catatan</label><input type="text" id="catZakat" placeholder="Keterangan"></div>
-          <div class="input-group"><label>🟡 Real Setoran</label><input type="text" id="realSetoran" class="input-rupiah" placeholder="Rp 0"></div>
-          <div class="input-group"><label>📝 Catatan</label><input type="text" id="catSetoran" placeholder="Keterangan"></div>
-          <div class="input-group"><label>📦 Pengeluaran Lain</label><input type="text" id="pengeluaranLain" class="input-rupiah" placeholder="Rp 0"></div>
-          <div class="input-group"><label>📝 Catatan</label><input type="text" id="catPengeluaranLain" placeholder="Keterangan"></div>
-          <div class="input-group"><label>🤲 Shodaqoh</label><input type="text" id="shodaqoh" class="input-rupiah" placeholder="Rp 0"></div>
+          <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.3"/><circle cx="18" cy="20" r="1.3"/><path d="M2 3h2l2.6 12.4a2 2 0 0 0 2 1.6H18a2 2 0 0 0 2-1.6L21.5 8H6"/></svg> Real Kulakan</label><input type="text" id="realKulakan" class="input-rupiah" placeholder="Rp 0"></div>
+          <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Katrangan</label><input type="text" id="catKulakan" placeholder="Katrangan"></div>
+          <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.2A8.4 8.4 0 1 1 9.8 4a7 7 0 0 0 10.2 10.2Z"/></svg> Real Zakat</label><input type="text" id="realZakat" class="input-rupiah" placeholder="Rp 0"></div>
+          <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Katrangan</label><input type="text" id="catZakat" placeholder="Katrangan"></div>
+          <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><line x1="6" y1="9.5" x2="6" y2="9.51"/><line x1="18" y1="14.5" x2="18" y2="14.51"/></svg> Real Setoran</label><input type="text" id="realSetoran" class="input-rupiah" placeholder="Rp 0"></div>
+          <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Katrangan</label><input type="text" id="catSetoran" placeholder="Katrangan"></div>
+          <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7.5 12 3 3 7.5v9L12 21l9-4.5Z"/><path d="M3 7.5 12 12l9-4.5"/><path d="M12 12v9"/></svg> Pengeluaran Lain</label><input type="text" id="pengeluaranLain" class="input-rupiah" placeholder="Rp 0"></div>
+          <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Katrangan</label><input type="text" id="catPengeluaranLain" placeholder="Katrangan"></div>
+          <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8.5" width="18" height="4" rx="1"/><rect x="5" y="12.5" width="14" height="8.5" rx="1"/><line x1="12" y1="8.5" x2="12" y2="21"/><path d="M12 8.5c-1.8 0-4-1-4-3s2.2-2.6 4 0c1.8-2.6 4-2 4 0s-2.2 3-4 3Z"/></svg> Shodaqoh</label><input type="text" id="shodaqoh" class="input-rupiah" placeholder="Rp 0"></div>
         </div></div>
       </div>
 
       <div class="preview-box" id="previewBox"></div>
       <div class="btn-wrap">
-        <button class="btn btn-primary" id="btnSimpan" onclick="simpanData()">💾 Simpan</button>
-        <button class="btn btn-danger" id="btnHapusForm" style="display:none;" onclick="hapusDataForm()">🗑️ Hapus</button>
-        <button class="btn btn-secondary" id="btnReset" onclick="resetForm()">🔄 Reset</button>
+        <button class="btn btn-primary" id="btnSimpan" onclick="simpanData()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpen</button>
+        <button class="btn btn-danger" id="btnHapusForm" style="display:none;" onclick="hapusDataForm()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7"/><path d="M6 7l1 13a2 2 0 0 0 2 1.8h6a2 2 0 0 0 2-1.8L18 7"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> Busak</button>
+        <button class="btn btn-secondary" id="btnReset" onclick="resetForm()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.5 9A9 9 0 0 0 5 5.6L1 10m22 4-4 4.4A9 9 0 0 1 3.5 15"/></svg> Reset</button>
       </div>
     </div>
   </div>
 
-  <div id="grafikPage" style="display:none;"><div class="section-title"><div class="sicon">📊</div><div><h2>Grafik Premium</h2></div></div><div class="chart-grid" id="chartsContainer"></div></div>
+  <div id="grafikPage" style="display:none;"><div class="section-title"><div class="sicon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="20" x2="5" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="19" y1="20" x2="19" y2="14"/></svg></div><div><h2>Grafik</h2></div></div><div class="chart-grid" id="chartsContainer"></div></div>
 
   <div id="rekapPage" style="display:none;">
-    <div class="section-title"><div class="sicon">📋</div><div><h2>Rekap Transaksi</h2><p>Total: <b id="totalData">0</b> data</p></div></div>
-    <button class="btn btn-primary" onclick="exportPDF()" style="margin-bottom:12px;">📄 Export Laporan Bulanan</button>
-    <div class="table-card"><div class="table-responsive"><table><thead><tr><th>Tgl</th><th>Gas</th><th>Galon</th><th>Omzet</th><th>Kulakan</th><th>Ops</th><th>Zakat</th><th>Setoran</th><th>Laba</th><th>Aksi</th></tr></thead><tbody id="rekapBody"></tbody></table></div></div>
+    <div class="section-title"><div class="sicon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.6" cy="6" r="0.9" fill="currentColor" stroke="none"/><circle cx="3.6" cy="12" r="0.9" fill="currentColor" stroke="none"/><circle cx="3.6" cy="18" r="0.9" fill="currentColor" stroke="none"/></svg></div><div><h2>Rekap Transaksi</h2><p>Total: <b id="totalData">0</b> data</p></div></div>
+    <button class="btn btn-primary" onclick="exportPDF()" style="margin-bottom:12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Z"/><polyline points="15 2 15 7 20 7"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg> Export Laporan Bulanan</button>
+    <div class="tx-list" id="rekapBody"></div>
   </div>
 
   <div id="analisisPage" style="display:none;">
     <div class="analisis-hero">
-      <div><div class="hero-badge">🔬 SMART BUSINESS ANALYTICS</div><h1>Dashboard Analisis</h1><p>Insight penjualan, profit, stok, dan skor kesehatan bisnis realtime.</p></div>
+      <div><div class="hero-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 12 8 12 10 6 14 18 16 12 21 12"/></svg> SMART BUSINESS ANALYTICS</div><h1>Analisis Usaha</h1><p>Insight dodolan, laba, stok, lan skor kesehatan bisnis, langsung/realtime.</p></div>
       <div class="hero-actions">
         <button class="filter-btn active" onclick="setAnalisisFilter('minggu',this)">7 Hari</button>
         <button class="filter-btn" onclick="setAnalisisFilter('bulan',this)">1 Bulan</button>
-        <button class="filter-btn" onclick="setAnalisisFilter('semua',this)">Semua</button>
+        <button class="filter-btn" onclick="setAnalisisFilter('semua',this)">Kabeh</button>
       </div>
     </div>
     <div id="anomalyAlert"></div>
@@ -429,47 +493,47 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
         <div class="insight-grid-v2" id="insightGrid"></div>
       </div>
       <div class="right-col">
-        <div class="chart-card-v2"><h3>📈 Tren Omzet</h3><div class="chart-wrap-v2"><canvas id="cTrend"></canvas></div></div>
-        <div class="chart-card-v2"><h3>🍩 Komposisi Omzet</h3><div class="chart-wrap-v2"><canvas id="cKomposisi"></canvas></div></div>
-        <div class="chart-card-v2"><h3>🔮 Forecast 7 Hari</h3><div class="chart-wrap-v2"><canvas id="cForecast"></canvas></div></div>
+        <div class="chart-card-v2"><h3><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 6"/><polyline points="15 6 21 6 21 12"/></svg> Tren Omzet</h3><div class="chart-wrap-v2"><canvas id="cTrend"></canvas></div></div>
+        <div class="chart-card-v2"><h3><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 9 9h-9Z"/></svg> Komposisi Omzet</h3><div class="chart-wrap-v2"><canvas id="cKomposisi"></canvas></div></div>
+        <div class="chart-card-v2"><h3><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg> Prediksi 7 Dina</h3><div class="chart-wrap-v2"><canvas id="cForecast"></canvas></div></div>
       </div>
     </div>
   </div>
 
   <div id="setoranPage" style="display:none;">
-    <div class="section-title"><div class="sicon">💵</div><div><h2>Riwayat Setoran</h2><p>Total: <b id="totalSetoranVal">Rp 0</b></p></div></div>
+    <div class="section-title"><div class="sicon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><line x1="6" y1="9.5" x2="6" y2="9.51"/><line x1="18" y1="14.5" x2="18" y2="14.51"/></svg></div><div><h2>Riwayat Setoran</h2><p>Total: <b id="totalSetoranVal">Rp 0</b></p></div></div>
     <div class="table-card"><div class="table-responsive"><table><thead><tr><th>Tanggal</th><th>Jumlah</th><th>Catatan</th></tr></thead><tbody id="setoranBody"></tbody></table></div></div>
   </div>
 
   <div id="kasAdminPage" style="display:none;">
-    <div class="section-title"><div class="sicon">💰</div><div><h2>Kas Admin <span class="acc-badge" id="kasAdminPeriodBadge">Semua data</span></h2><p id="totalKasAdmin">Total Sisa: Rp 0</p></div></div>
+    <div class="section-title"><div class="sicon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="14" rx="2.5"/><path d="M2.5 10.5h19"/><circle cx="17" cy="15" r="1.3" fill="currentColor" stroke="none"/></svg></div><div><h2>Kas Admin <span class="acc-badge" id="kasAdminPeriodBadge">Kabeh data</span></h2><p id="totalKasAdmin">Total Sisa: Rp 0</p></div></div>
     <div class="table-card"><div class="table-responsive"><table><thead><tr><th>Pos</th><th>Jatah</th><th>Real</th><th>Sisa</th></tr></thead><tbody id="kasAdminBody"></tbody></table></div></div>
 
-    <div class="section-title" style="margin-top:18px;"><div class="sicon">🏦</div><div><h2>Dana Cadangan</h2><p>Dhuwit sing DUDU saka transaksi harian (mis. sisa kas lawas) — ora otomatis mlebu Setoran</p></div></div>
+    <div class="section-title" style="margin-top:18px;"><div class="sicon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="21" x2="21" y2="21"/><path d="M3 10 12 4l9 6"/><line x1="5" y1="10" x2="5" y2="21"/><line x1="9" y1="10" x2="9" y2="21"/><line x1="15" y1="10" x2="15" y2="21"/><line x1="19" y1="10" x2="19" y2="21"/></svg></div><div><h2>Dana Cadangan</h2><p>Dhuwit sing DUDU saka transaksi harian (mis. sisa kas lawas) — ora otomatis mlebu Setoran</p></div></div>
     <div class="chart-card" style="margin-bottom:12px;">
       <p style="font-size:20px;font-weight:800;margin:0 0 10px;">Saldo: <span id="cadanganSaldo">Rp0</span></p>
       <div class="form-grid">
-        <div class="input-group"><label>📅 Tanggal</label><input type="date" id="tglCadangan"></div>
-        <div class="input-group"><label>↕️ Jenis</label>
+        <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16.5" rx="2"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Tanggal</label><input type="date" id="tglCadangan"></div>
+        <div class="input-group"><label>Jinis</label>
           <select id="jenisCadangan"><option value="masuk">Masuk (tambah cadangan)</option><option value="keluar">Keluar (dienggo/dicilikake)</option></select>
         </div>
-        <div class="input-group"><label>💵 Jumlah</label><input type="text" id="jumlahCadangan" class="input-rupiah" placeholder="Rp 0"></div>
-        <div class="input-group"><label>📝 Keterangan</label><input type="text" id="ketCadangan" placeholder="Contoh: Sisa kas Juli sadurunge aplikasi"></div>
+        <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><line x1="6" y1="9.5" x2="6" y2="9.51"/><line x1="18" y1="14.5" x2="18" y2="14.51"/></svg> Jumlah</label><input type="text" id="jumlahCadangan" class="input-rupiah" placeholder="Rp 0"></div>
+        <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Katrangan</label><input type="text" id="ketCadangan" placeholder="Conto: Sisa kas Juli sadurunge aplikasi"></div>
       </div>
-      <button class="btn btn-primary" style="margin-top:10px;" onclick="simpanCadangan()">💾 Simpan Dana Cadangan</button>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="simpanCadangan()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpen Dana Cadangan</button>
     </div>
-    <div class="table-card"><div class="table-responsive"><table><thead><tr><th>Tanggal</th><th>Jenis</th><th>Jumlah</th><th>Keterangan</th><th>Saldo</th><th>Aksi</th></tr></thead><tbody id="cadanganHistBody"></tbody></table></div></div>
+    <div class="table-card"><div class="table-responsive"><table><thead><tr><th>Tanggal</th><th>Jinis</th><th>Jumlah</th><th>Katrangan</th><th>Saldo</th><th>Tumindak</th></tr></thead><tbody id="cadanganHistBody"></tbody></table></div></div>
 
-    <div class="section-title" style="margin-top:18px;"><div class="sicon">🧴</div><div><h2>Kelola Produk</h2><p>Produk fleksibel (kadhang-kadhang didol) — tambah/busak kapan wae, stok kacathet otomatis kaya gas/galon</p></div></div>
+    <div class="section-title" style="margin-top:18px;"><div class="sicon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2h4"/><path d="M10 2v4.5L7.5 10v10a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5V10L14 6.5V2"/></svg></div><div><h2>Tata Produk</h2><p>Produk fleksibel (kadhang-kadhang didol) — tambah/busak kapan wae, stok kacathet otomatis kaya gas/galon</p></div></div>
     <div class="chart-card" style="margin-bottom:12px;">
       <div id="produkKelolaList"></div>
-      <button class="btn" style="margin-top:8px;background:var(--surface2);color:var(--dark);" onclick="tambahBarisProduk()">➕ Tambah Produk</button>
-      <button class="btn btn-primary" style="margin-top:10px;" onclick="simpanProduk()">💾 Simpan Kabeh Produk</button>
+      <button class="btn" style="margin-top:8px;background:var(--surface2);color:var(--dark);" onclick="tambahBarisProduk()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tambah Produk</button>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="simpanProduk()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpen Kabeh Produk</button>
     </div>
 
-    <div class="section-title" style="margin-top:18px;"><div class="sicon">⚙️</div><div><h2>Pengaturan Tarif</h2><p>Owahi yen ana rega/tarif sing pancen ganti</p></div></div>
+    <div class="section-title" style="margin-top:18px;"><div class="sicon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/></svg></div><div><h2>Atur Tarif</h2><p>Owahi yen ana rega/tarif sing pancen ganti</p></div></div>
     <div class="chart-card" style="margin-bottom:12px;">
-      <b style="font-size:11px;color:var(--gray);">💰 Harga Jual (per tabung/galon)</b>
+      <b style="font-size:11px;color:var(--gray);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="14" rx="2.5"/><path d="M2.5 10.5h19"/><circle cx="17" cy="15" r="1.3" fill="currentColor" stroke="none"/></svg> Harga Jual (per tabung/galon)</b>
       <div class="form-grid" style="margin-top:6px;">
         <div class="input-group"><label>Gas 22K</label><input type="number" id="tarif_harga_gas22" min="0"></div>
         <div class="input-group"><label>Gas 23K</label><input type="number" id="tarif_harga_gas23" min="0"></div>
@@ -478,12 +542,12 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
         <div class="input-group"><label>Galon 4rb</label><input type="number" id="tarif_harga_galon4k" min="0"></div>
         <div class="input-group"><label>Galon 5rb</label><input type="number" id="tarif_harga_galon5k" min="0"></div>
       </div>
-      <b style="font-size:11px;color:var(--gray);">🔵 Harga Kulakan (per tabung, dienggo ngitung Jatah Kulakan)</b>
+      <b style="font-size:11px;color:var(--gray);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.3"/><circle cx="18" cy="20" r="1.3"/><path d="M2 3h2l2.6 12.4a2 2 0 0 0 2 1.6H18a2 2 0 0 0 2-1.6L21.5 8H6"/></svg> Harga Kulakan (per tabung, dienggo ngitung Jatah Kulakan)</b>
       <div class="form-grid" style="margin-top:6px;">
         <div class="input-group"><label>Gas Std (22K/23K)</label><input type="number" id="tarif_kulak_gasStd" min="0"></div>
         <div class="input-group"><label>Gas Pink</label><input type="number" id="tarif_kulak_gasPink" min="0"></div>
       </div>
-      <b style="font-size:11px;color:var(--gray);">🔧 Jatah Operasional (per tabung/galon terjual, kajaba Jajan flat/hari)</b>
+      <b style="font-size:11px;color:var(--gray);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 1 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4L14.5 12l-2.5-2.5Z"/></svg> Jatah Operasional (per tabung/galon terjual, kajaba Jajan & Biaya Admin flat/hari)</b>
       <div class="form-grid" style="margin-top:6px;">
         <div class="input-group"><label>Transport /Gas</label><input type="number" id="tarif_jatah_transportGas" min="0"></div>
         <div class="input-group"><label>Transport /Galon</label><input type="number" id="tarif_jatah_transportGalon" min="0"></div>
@@ -496,55 +560,55 @@ td { padding: 8px; border-bottom: 1px solid var(--border); font-size: 10px; whit
         <div class="input-group"><label>Jajan (flat/hari)</label><input type="number" id="tarif_jatah_jajanFlat" min="0"></div>
         <div class="input-group"><label>Biaya Admin (flat/hari)</label><input type="number" id="tarif_jatah_biayaAdminFlat" min="0"></div>
       </div>
-      <button class="btn btn-primary" style="margin-top:10px;" onclick="simpanTarif()">💾 Simpan Tarif</button>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="simpanTarif()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpen Tarif</button>
       <div style="font-size:10px;color:var(--gray);margin-top:6px;">Owahan mung mengaruhi transaksi ANYAR sabanjuré — data transaksi sing wis kasimpen ora melu diowahi.</div>
     </div>
   </div>
 
   <div id="stokPage" style="display:none;">
-    <div class="section-title"><div class="sicon">📦</div><div><h2>Input Stok Gas</h2></div></div>
+    <div class="section-title"><div class="sicon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7.5 12 3 3 7.5v9L12 21l9-4.5Z"/><path d="M3 7.5 12 12l9-4.5"/><path d="M12 12v9"/></svg></div><div><h2>Input Stok Gas</h2></div></div>
     <div class="chart-card" style="margin-bottom:12px;">
       <div class="form-grid">
-        <div class="input-group"><label>📅 Tanggal</label><input type="date" id="tglStok"></div>
-        <div class="input-group"><label>🔥 Gas 22K/23K Masuk</label><input type="number" id="gasStdMasuk" placeholder="0" min="0"></div>
-        <div class="input-group"><label>💗 Gas Pink Masuk</label><input type="number" id="gasPinkMasuk" placeholder="0" min="0"></div>
-        <div class="input-group"><label>📝 Keterangan</label><input type="text" id="ketStok" placeholder="🚛 Truk datang"></div>
+        <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16.5" rx="2"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Tanggal</label><input type="date" id="tglStok"></div>
+        <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5a2.5 2.5 0 0 0 5 0c0-1.4-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7.5 7.5 0 1 1-15 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 1 3Z"/></svg> Gas 22K/23K Masuk</label><input type="number" id="gasStdMasuk" placeholder="0" min="0"></div>
+        <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.2-4.4-9.7-9A5.4 5.4 0 0 1 12 6.2 5.4 5.4 0 0 1 21.7 12c-2.5 4.6-9.7 9-9.7 9Z"/></svg> Gas Pink Masuk</label><input type="number" id="gasPinkMasuk" placeholder="0" min="0"></div>
+        <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Katrangan</label><input type="text" id="ketStok" placeholder="Truk datang"></div>
       </div>
-      <button class="btn btn-primary" style="margin-top:10px;" onclick="inputStok()">💾 Simpan Stok Masuk</button>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="inputStok()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpen Stok Masuk</button>
     </div>
 
-    <div class="section-title" style="margin-top:18px;"><div class="sicon">🧴</div><div><h2>Input Stok Produk Lain</h2><p>Kulakan barang fleksibel (mis. air mineral dus-dusan)</p></div></div>
+    <div class="section-title" style="margin-top:18px;"><div class="sicon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2h4"/><path d="M10 2v4.5L7.5 10v10a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5V10L14 6.5V2"/></svg></div><div><h2>Input Stok Produk Lain</h2><p>Kulakan barang fleksibel (mis. air mineral dus-dusan)</p></div></div>
     <div class="chart-card" style="margin-bottom:12px;" id="stokProdukCard">
       <div class="form-grid">
-        <div class="input-group"><label>📅 Tanggal</label><input type="date" id="tglStokProduk"></div>
-        <div class="input-group"><label>🏷️ Produk</label><select id="produkStokId"></select></div>
-        <div class="input-group"><label>📦 Satuan</label><select id="produkStokSatuan"><option value="pcs">Pcs</option><option value="dus">Dus</option></select></div>
-        <div class="input-group"><label>🔢 Jumlah</label><input type="number" id="produkStokQty" placeholder="0" min="0"></div>
-        <div class="input-group"><label>📝 Keterangan</label><input type="text" id="ketStokProduk" placeholder="🚛 Kulakan"></div>
+        <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16.5" rx="2"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Tanggal</label><input type="date" id="tglStokProduk"></div>
+        <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12.6 12.6 20a2 2 0 0 1-2.8 0l-7.8-7.8a2 2 0 0 1 0-2.8L9.4 2h8a2 2 0 0 1 2 2v8.6Z"/><circle cx="14.5" cy="7.5" r="1.3" fill="currentColor" stroke="none"/></svg> Produk</label><select id="produkStokId"></select></div>
+        <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7.5 12 3 3 7.5v9L12 21l9-4.5Z"/><path d="M3 7.5 12 12l9-4.5"/><path d="M12 12v9"/></svg> Satuan</label><select id="produkStokSatuan"><option value="pcs">Pcs</option><option value="dus">Dus</option></select></div>
+        <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="19" y2="15"/><line x1="10" y1="3" x2="7" y2="21"/><line x1="17" y1="3" x2="14" y2="21"/></svg> Jumlah</label><input type="number" id="produkStokQty" placeholder="0" min="0"></div>
+        <div class="input-group"><label><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Katrangan</label><input type="text" id="ketStokProduk" placeholder="Kulakan"></div>
       </div>
-      <button class="btn btn-primary" style="margin-top:10px;" onclick="inputStokProduk()">💾 Simpan Stok Produk Masuk</button>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="inputStokProduk()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpen Stok Produk Masuk</button>
     </div>
 
-    <div class="section-title"><div class="sicon">📊</div><div><h2>Prediksi Stok</h2></div></div>
+    <div class="section-title"><div class="sicon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 6"/><polyline points="15 6 21 6 21 12"/></svg></div><div><h2>Prediksi Stok</h2></div></div>
     <div class="stok-grid2" id="stokPrediksiGrid"></div>
     <div class="stok-grid2" id="stokProdukPrediksiGrid" style="margin-top:8px;"></div>
 
-    <div class="section-title" style="margin-top:18px;"><div class="sicon">📋</div><div><h2>Riwayat Stok Masuk</h2><p>30 catetan pungkasan — koreksi yen ana sing salah input</p></div></div>
-    <div class="table-card"><div class="table-responsive"><table><thead><tr><th>Tanggal</th><th>SKU</th><th>Jumlah</th><th>Keterangan</th><th id="stokHistActionHead" style="display:none;">Aksi</th></tr></thead><tbody id="stokHistBody"></tbody></table></div></div>
+    <div class="section-title" style="margin-top:18px;"><div class="sicon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg></div><div><h2>Riwayat Stok Masuk</h2><p>30 catetan pungkasan — koreksi yen ana sing salah input</p></div></div>
+    <div class="table-card"><div class="table-responsive"><table><thead><tr><th>Tanggal</th><th>SKU</th><th>Jumlah</th><th>Katrangan</th><th id="stokHistActionHead" style="display:none;">Tumindak</th></tr></thead><tbody id="stokHistBody"></tbody></table></div></div>
   </div>
 </div>
 
 <div class="sticky-summary" id="stickySummary">
   <div class="ss-item"><small>Omzet</small><b id="ssOmzet">Rp0</b></div>
   <div class="ss-item"><small>Estimasi Laba</small><b id="ssLaba">Rp0</b></div>
-  <button type="button" class="btn btn-primary" id="btnSimpanSticky" onclick="simpanData()">💾 Simpan</button>
+  <button type="button" class="btn btn-primary" id="btnSimpanSticky" onclick="simpanData()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpen</button>
 </div>
 <nav class="bottom-nav" id="bottomNav"></nav>
 <div class="toast" id="toast"></div>
 <div class="popup-overlay" id="popupOverlay">
   <div class="popup-box">
     <button class="popup-close-btn" onclick="closePopup()">×</button>
-    <div class="popup-header"><h1 class="popup-title" id="popupTitle">Detail</h1><p class="popup-subtitle" id="popupSubtitle">Informasi</p><div class="popup-icon" id="popupIcon">💰</div></div>
+    <div class="popup-header"><h1 class="popup-title" id="popupTitle">Detail</h1><p class="popup-subtitle" id="popupSubtitle">Informasi</p><div class="popup-icon" id="popupIcon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="14" rx="2.5"/><path d="M2.5 10.5h19"/><circle cx="17" cy="15" r="1.3" fill="currentColor" stroke="none"/></svg></div></div>
     <div class="popup-body" id="popupContent"></div>
   </div>
 </div>
@@ -563,17 +627,61 @@ const HARGA={gas22:22000,gas23:23000,gasPink:125000,galon3k:3000,galon4k:4000,ga
 const KULAK={gasStd:15833,gasPink:110000};
 const JATAH={transportGas:400,transportGalon:500,wifiGas:500,opkirimGas:833,airGalon:500,listrikGalon:500,pemeliharaanGalon:500,tisuTutupGalon:500,jajanFlat:10000,biayaAdminFlat:5000};
 let PRODUK=[]; // katalog produk fleksibel, disinkron saka backend (syncProduk()) — lihat "Kelola Produk" di kaca Kas Admin
+/* ===================== ICON SYSTEM (Tahap 1 redesign) =====================
+   Emoji diganti SVG outline konsisten kanggo ikon fungsional (nav, kpi, section-title).
+   Emoji tetep dienggo mung kanggo peringatan/komunikasi (⚠️ dsb), dudu sistem ikon utama. */
+const ICONS={
+  home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/>',
+  edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  barchart:'<line x1="5" y1="20" x2="5" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="19" y1="20" x2="19" y2="14"/>',
+  activity:'<polyline points="3 12 8 12 10 6 14 18 16 12 21 12"/>',
+  list:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.6" cy="6" r="0.9" fill="currentColor" stroke="none"/><circle cx="3.6" cy="12" r="0.9" fill="currentColor" stroke="none"/><circle cx="3.6" cy="18" r="0.9" fill="currentColor" stroke="none"/>',
+  wallet:'<rect x="2.5" y="6" width="19" height="14" rx="2.5"/><path d="M2.5 10.5h19"/><circle cx="17" cy="15" r="1.3" fill="currentColor" stroke="none"/>',
+  banknote:'<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><line x1="6" y1="9.5" x2="6" y2="9.51"/><line x1="18" y1="14.5" x2="18" y2="14.51"/>',
+  box:'<path d="M21 7.5 12 3 3 7.5v9L12 21l9-4.5Z"/><path d="M3 7.5 12 12l9-4.5"/><path d="M12 12v9"/>',
+  bottle:'<path d="M10 2h4"/><path d="M10 2v4.5L7.5 10v10a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5V10L14 6.5V2"/>',
+  flame:'<path d="M8.5 14.5a2.5 2.5 0 0 0 5 0c0-1.4-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7.5 7.5 0 1 1-15 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 1 3Z"/>',
+  droplet:'<path d="M12 2s7 8.4 7 13.2A7 7 0 0 1 5 15.2C5 10.4 12 2 12 2Z"/>',
+  heart:'<path d="M12 21s-7.2-4.4-9.7-9A5.4 5.4 0 0 1 12 6.2 5.4 5.4 0 0 1 21.7 12c-2.5 4.6-9.7 9-9.7 9Z"/>',
+  wrench:'<path d="M14.7 6.3a4 4 0 1 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4L14.5 12l-2.5-2.5Z"/>',
+  utensils:'<path d="M6 2v7a2 2 0 0 0 4 0V2"/><path d="M8 9v13"/><path d="M17.5 2c-1.4 0-2.5 2.2-2.5 5s1.1 5 2.5 5V22"/>',
+  moon:'<path d="M20 14.2A8.4 8.4 0 1 1 9.8 4a7 7 0 0 0 10.2 10.2Z"/>',
+  gift:'<rect x="3" y="8.5" width="18" height="4" rx="1"/><rect x="5" y="12.5" width="14" height="8.5" rx="1"/><line x1="12" y1="8.5" x2="12" y2="21"/><path d="M12 8.5c-1.8 0-4-1-4-3s2.2-2.6 4 0c1.8-2.6 4-2 4 0s-2.2 3-4 3Z"/>',
+  trendup:'<polyline points="3 17 9 11 13 15 21 6"/><polyline points="15 6 21 6 21 12"/>',
+  trenddown:'<polyline points="3 7 9 13 13 9 21 18"/><polyline points="15 18 21 18 21 12"/>',
+  cart:'<circle cx="9" cy="20" r="1.3"/><circle cx="18" cy="20" r="1.3"/><path d="M2 3h2l2.6 12.4a2 2 0 0 0 2 1.6H18a2 2 0 0 0 2-1.6L21.5 8H6"/>',
+  checkcircle:'<circle cx="12" cy="12" r="9"/><polyline points="8 12.5 11 15.5 16 9"/>',
+  alertcircle:'<circle cx="12" cy="12" r="9"/><line x1="12" y1="7.5" x2="12" y2="13"/><line x1="12" y1="16" x2="12" y2="16.01"/>',
+  bank:'<line x1="3" y1="21" x2="21" y2="21"/><path d="M3 10 12 4l9 6"/><line x1="5" y1="10" x2="5" y2="21"/><line x1="9" y1="10" x2="9" y2="21"/><line x1="15" y1="10" x2="15" y2="21"/><line x1="19" y1="10" x2="19" y2="21"/>',
+  settings:'<circle cx="12" cy="12" r="3.2"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/>',
+  calendar:'<rect x="3" y="4.5" width="18" height="16.5" rx="2"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  trash:'<path d="M4 7h16"/><path d="M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7"/><path d="M6 7l1 13a2 2 0 0 0 2 1.8h6a2 2 0 0 0 2-1.8L18 7"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>',
+  sun:'<circle cx="12" cy="12" r="4.2"/><line x1="12" y1="2" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="22"/><line x1="2" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="22" y2="12"/><line x1="4.6" y1="4.6" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.4" y2="19.4"/><line x1="4.6" y1="19.4" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.4" y2="4.6"/>',
+  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
+  refresh:'<polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.5 9A9 9 0 0 0 5 5.6L1 10m22 4-4 4.4A9 9 0 0 1 3.5 15"/>',
+  save:'<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>',
+  plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  search:'<circle cx="10.5" cy="10.5" r="6.5"/><line x1="20" y1="20" x2="15.3" y2="15.3"/>',
+  receipt:'<path d="M6 2h12v19l-3-2-3 2-3-2-3 2Z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/>',
+  file:'<path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Z"/><polyline points="15 2 15 7 20 7"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/>',
+  piechart:'<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 9 9h-9Z"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/>',
+  tag:'<path d="M20 12.6 12.6 20a2 2 0 0 1-2.8 0l-7.8-7.8a2 2 0 0 1 0-2.8L9.4 2h8a2 2 0 0 1 2 2v8.6Z"/><circle cx="14.5" cy="7.5" r="1.3" fill="currentColor" stroke="none"/>',
+  hash:'<line x1="5" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="19" y2="15"/><line x1="10" y1="3" x2="7" y2="21"/><line x1="17" y1="3" x2="14" y2="21"/>'
+};
+function icon(name,size){size=size||20;return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block">'+(ICONS[name]||'')+'</svg>';}
 const COL={id:0,tanggal:1,waktu:2,gas22:3,gas23:4,gasPink:5,galon3k:6,galon4k:7,galon5k:8,pemasukanLain:9,ketPemasukanLain:10,realTransport:11,catTransport:12,realWifi:13,catWifi:14,realOpkirimgas:15,catOpkirimgas:16,realAir:17,catAir:18,realListrik:19,catListrik:20,realPemeliharaan:21,catPemeliharaan:22,realTisuTutup:23,catTisuTutup:24,realJajan:25,catJajan:26,realKulakan:27,catKulakan:28,realZakat:29,catZakat:30,realSetoran:31,catSetoran:32,pengeluaranLain:33,catPengeluaranLain:34,shodaqoh:35,totalOmzet:36,omzetGas:37,omzetGalon:38,jatahKulakan:39,jatahOps:40,jatahZakat:41,jatahSetoran:42,totalReal:43,totalPengeluaran:44,labaBersih:45,status:46,createdAt:47,updatedAt:48,version:49,jatahOpsTransport:50,jatahOpsWifi:51,jatahOpsOpkirim:52,jatahOpsAir:53,jatahOpsListrik:54,jatahOpsPemeliharaan:55,jatahOpsTisuTutup:56,jatahOpsJajan:57,modalPemasukanLain:58,produkTerjualJson:59,realBiayaAdmin:60,catBiayaAdmin:61,jatahOpsBiayaAdmin:62};
 const POS=[
-  {key:'realTransport',catKey:'catTransport',label:'🚚 Transport',jatahFn:(g,gl)=>(g*JATAH.transportGas)+(gl*JATAH.transportGalon),realCol:COL.realTransport,catCol:COL.catTransport,histCol:COL.jatahOpsTransport},
-  {key:'realWifi',catKey:'catWifi',label:'🌐 Wifi',jatahFn:(g)=>g*JATAH.wifiGas,realCol:COL.realWifi,catCol:COL.catWifi,histCol:COL.jatahOpsWifi},
-  {key:'realOpkirimgas',catKey:'catOpkirimgas',label:'📦 Op.Kirim Gas',jatahFn:(g)=>g*JATAH.opkirimGas,realCol:COL.realOpkirimgas,catCol:COL.catOpkirimgas,histCol:COL.jatahOpsOpkirim},
-  {key:'realAir',catKey:'catAir',label:'💧 Air',jatahFn:(_,gl)=>gl*JATAH.airGalon,realCol:COL.realAir,catCol:COL.catAir,histCol:COL.jatahOpsAir},
-  {key:'realListrik',catKey:'catListrik',label:'⚡ Listrik',jatahFn:(_,gl)=>gl*JATAH.listrikGalon,realCol:COL.realListrik,catCol:COL.catListrik,histCol:COL.jatahOpsListrik},
-  {key:'realPemeliharaan',catKey:'catPemeliharaan',label:'🔧 Pemeliharaan',jatahFn:(_,gl)=>gl*JATAH.pemeliharaanGalon,realCol:COL.realPemeliharaan,catCol:COL.catPemeliharaan,histCol:COL.jatahOpsPemeliharaan},
-  {key:'realTisuTutup',catKey:'catTisuTutup',label:'🧻 Tutup & Tisu',jatahFn:(_,gl)=>gl*JATAH.tisuTutupGalon,realCol:COL.realTisuTutup,catCol:COL.catTisuTutup,histCol:COL.jatahOpsTisuTutup},
-  {key:'realJajan',catKey:'catJajan',label:'🟠 Jajan 2 Orang',jatahFn:()=>JATAH.jajanFlat,realCol:COL.realJajan,catCol:COL.catJajan,histCol:COL.jatahOpsJajan},
-  {key:'realBiayaAdmin',catKey:'catBiayaAdmin',label:'🧑‍💼 Biaya Admin',jatahFn:()=>JATAH.biayaAdminFlat,realCol:COL.realBiayaAdmin,catCol:COL.catBiayaAdmin,histCol:COL.jatahOpsBiayaAdmin}
+  {key:'realTransport',catKey:'catTransport',iconName:'cart',label:'Transport',jatahFn:(g,gl)=>(g*JATAH.transportGas)+(gl*JATAH.transportGalon),realCol:COL.realTransport,catCol:COL.catTransport,histCol:COL.jatahOpsTransport},
+  {key:'realWifi',catKey:'catWifi',iconName:'activity',label:'Wifi',jatahFn:(g)=>g*JATAH.wifiGas,realCol:COL.realWifi,catCol:COL.catWifi,histCol:COL.jatahOpsWifi},
+  {key:'realOpkirimgas',catKey:'catOpkirimgas',iconName:'box',label:'Op.Kirim Gas',jatahFn:(g)=>g*JATAH.opkirimGas,realCol:COL.realOpkirimgas,catCol:COL.catOpkirimgas,histCol:COL.jatahOpsOpkirim},
+  {key:'realAir',catKey:'catAir',iconName:'droplet',label:'Air',jatahFn:(_,gl)=>gl*JATAH.airGalon,realCol:COL.realAir,catCol:COL.catAir,histCol:COL.jatahOpsAir},
+  {key:'realListrik',catKey:'catListrik',iconName:'settings',label:'Listrik',jatahFn:(_,gl)=>gl*JATAH.listrikGalon,realCol:COL.realListrik,catCol:COL.catListrik,histCol:COL.jatahOpsListrik},
+  {key:'realPemeliharaan',catKey:'catPemeliharaan',iconName:'wrench',label:'Pemeliharaan',jatahFn:(_,gl)=>gl*JATAH.pemeliharaanGalon,realCol:COL.realPemeliharaan,catCol:COL.catPemeliharaan,histCol:COL.jatahOpsPemeliharaan},
+  {key:'realTisuTutup',catKey:'catTisuTutup',iconName:'gift',label:'Tutup & Tisu',jatahFn:(_,gl)=>gl*JATAH.tisuTutupGalon,realCol:COL.realTisuTutup,catCol:COL.catTisuTutup,histCol:COL.jatahOpsTisuTutup},
+  {key:'realJajan',catKey:'catJajan',iconName:'utensils',label:'Jajan 2 Orang',jatahFn:()=>JATAH.jajanFlat,realCol:COL.realJajan,catCol:COL.catJajan,histCol:COL.jatahOpsJajan},
+  {key:'realBiayaAdmin',catKey:'catBiayaAdmin',iconName:'wallet',label:'Biaya Admin',jatahFn:()=>JATAH.biayaAdminFlat,realCol:COL.realBiayaAdmin,catCol:COL.catBiayaAdmin,histCol:COL.jatahOpsBiayaAdmin}
 ];
 let allData=[],editId=null,currentPage='dashboardPage',stokSummary={},toastTimer=null;
 let chartInstances=[],chartTrend=null,chartKomposisi=null,chartForecast=null,currentAnalisisFilter='minggu';
@@ -674,7 +782,7 @@ function setFilter(j,btn){
     return;
   }
   customRow.style.display='none';
-  if(j==='semua'){document._filter=null;document.getElementById('filterLabel').textContent='Semua data';}
+  if(j==='semua'){document._filter=null;document.getElementById('filterLabel').textContent='Kabeh data';}
   else{
     const now=new Date();let m=new Date(now),a=new Date(now);
     if(j==='hari'){document.getElementById('filterLabel').textContent='Data hari ini';}
@@ -693,14 +801,14 @@ function applyCustomFilter(){
   if(mulai>akhir){const t=mulai;mulai=akhir;akhir=t;mEl.value=mulai;aEl.value=akhir;}
   document._filter={mulai,akhir};
   const fmt=s=>{const[y,mo,d]=s.split('-');return new Date(y,mo-1,d).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});};
-  document.getElementById('filterLabel').textContent=mulai===akhir?('Data tanggal '+fmt(mulai)):('Data '+fmt(mulai)+' s.d. '+fmt(akhir));
+  document.getElementById('filterLabel').textContent=mulai===akhir?('Data tanggal '+fmt(mulai)):('Data '+fmt(mulai)+' tekan '+fmt(akhir));
   updateDashboard();renderTable();if(currentPage==='kasAdminPage')renderKasAdmin();
 }
 function filterData(){const f=document._filter;if(!f)return allData;return allData.filter(d=>{const t=tglStr(d);return t>=f.mulai&&t<=f.akhir;});}
 
 /* ===================== NAV ===================== */
 function buildBottomNav(){
-  return [{id:'dashboardPage',icon:'🏠',label:'Home'},{id:'grafikPage',icon:'📊',label:'Grafik'},{id:'analisisPage',icon:'🔬',label:'Analisis'},{id:'rekapPage',icon:'📋',label:'Rekap'},{id:'kasAdminPage',icon:'💰',label:'Kas'},{id:'setoranPage',icon:'💵',label:'Setoran'},{id:'stokPage',icon:'📦',label:'Stok'}].filter(i=>i.id!=='kasAdminPage'||USER_ROLE==='admin').map(i=>`<button class="nav-btn2${currentPage===i.id?' active':''}" onclick="showMainPage('${i.id}')"><span class="nav-icon">${i.icon}</span><span class="nav-text">${i.label}</span></button>`).join('');
+  return [{id:'dashboardPage',icon:'home',label:'Beranda'},{id:'grafikPage',icon:'barchart',label:'Grafik'},{id:'analisisPage',icon:'activity',label:'Analisis'},{id:'rekapPage',icon:'list',label:'Rekap'},{id:'kasAdminPage',icon:'wallet',label:'Kas'},{id:'setoranPage',icon:'banknote',label:'Setoran'},{id:'stokPage',icon:'box',label:'Stok'}].filter(i=>i.id!=='kasAdminPage'||USER_ROLE==='admin').map(i=>`<button class="nav-btn2${currentPage===i.id?' active':''}" onclick="showMainPage('${i.id}')"><span class="nav-icon">${icon(i.icon,18)}</span><span class="nav-text">${i.label}</span></button>`).join('');
 }
 function showMainPage(p){
   if(p==='kasAdminPage'&&USER_ROLE!=='admin')p='dashboardPage';
@@ -733,7 +841,7 @@ function buildOpRows(data){
   return POS.map(p=>{
     const j=p.jatahFn(g,gl),r=data?(data[p.key]||0):0,rd=data?toRupiah(r):'',sVal=j-r;
     return `<div class="op-row">
-      <div class="op-row-top"><span class="op-row-label">${p.label}</span><span class="op-row-jatah">Jatah <b id="jatah_${p.key}">${rupiah(j)}</b></span></div>
+      <div class="op-row-top"><span class="op-row-label">${icon(p.iconName,14)} ${p.label}</span><span class="op-row-jatah">Jatah <b id="jatah_${p.key}">${rupiah(j)}</b></span></div>
       <div class="op-row-mid">
         <input type="text" id="${p.key}" value="${rd}" class="input-rupiah" placeholder="Real Rp0">
         <span class="op-row-sisa" id="sisa_${p.key}" style="color:${sVal>=0?'var(--success)':'var(--danger)'};">${sVal>=0?'+'+rupiah(sVal):rupiah(sVal)}</span>
@@ -798,8 +906,8 @@ function fillForm(r){
   setVal('pengeluaranLain',toRupiah(r[COL.pengeluaranLain]));setVal('catPengeluaranLain',r[COL.catPengeluaranLain]||'');
   setVal('shodaqoh',toRupiah(r[COL.shodaqoh]));bindOpEvents();updatePreview();
   document.getElementById('infoEdit').style.display='block';document.getElementById('btnHapusForm').style.display='block';
-  document.getElementById('btnSimpan').textContent='✏️ Simpan Perubahan';document.getElementById('btnReset').style.display='none';
-  const stk=document.getElementById('btnSimpanSticky');if(stk)stk.textContent='✏️ Simpan Perubahan';
+  document.getElementById('btnSimpan').innerHTML=icon('edit',14)+' Simpen Owahan';document.getElementById('btnReset').style.display='none';
+  const stk=document.getElementById('btnSimpanSticky');if(stk)stk.innerHTML=icon('edit',14)+' Simpen Owahan';
   document.getElementById('accOps').classList.add('open');
   document.getElementById('accKas').classList.add('open');
   if(Number(r[COL.pemasukanLain]||0)>0)document.getElementById('accPemasukan').classList.add('open');
@@ -817,7 +925,7 @@ function hapusDataForm(){if(editId)hapusData(editId);}
 async function hapusData(id){
   if(!confirm('Yakin ingin menghapus data ini?'))return;
   const d=new FormData();d.append('token',TOKEN);d.append('action','hapus');d.append('id',id);
-  try{const r=await(await fetch(API_URL,{method:'POST',body:d})).json();toast(r.message||'✅ Dihapus');resetForm();await loadAllData();}catch(e){toast('❌ Gagal hapus');}
+  try{const r=await(await fetch(API_URL,{method:'POST',body:d})).json();toast(r.message||'✅ Kabusak');resetForm();await loadAllData();}catch(e){toast('❌ Gagal busak');}
 }
 function onTanggalChange(){
   const val=document.getElementById('tanggal')?.value;if(!val)return;
@@ -830,14 +938,14 @@ function resetForm(keepDate){
   document.getElementById('opContainer').innerHTML=buildOpRows(null);bindOpEvents();
   buildProdukRows(null);updatePreview();
   document.getElementById('infoEdit').style.display='none';document.getElementById('btnHapusForm').style.display='none';
-  document.getElementById('btnSimpan').textContent='💾 Simpan';document.getElementById('btnReset').style.display='block';
-  const stk=document.getElementById('btnSimpanSticky');if(stk)stk.textContent='💾 Simpan';
+  document.getElementById('btnSimpan').innerHTML=icon('save',14)+' Simpen';document.getElementById('btnReset').style.display='block';
+  const stk=document.getElementById('btnSimpanSticky');if(stk)stk.innerHTML=icon('save',14)+' Simpen';
   const dd=document.getElementById('pilihTanggal');if(dd)dd.value='';
   ['accPemasukan','accProduk','accOps','accKas'].forEach(id=>document.getElementById(id).classList.remove('open'));
 }
 async function simpanData(){
   const tanggal=document.getElementById('tanggal')?.value||'';
-  if(!tanggal){toast('⚠️ Tanggal wajib diisi');return;}
+  if(!tanggal){toast('⚠️ Tanggal kudu diisi');return;}
   const btns=[document.getElementById('btnSimpan'),document.getElementById('btnSimpanSticky')].filter(Boolean);
   if(btns.some(b=>b.disabled))return; // jaga-jaga aja nganti double-tap kirim 2x
   const oldTxt=btns.map(b=>b.textContent);
@@ -856,7 +964,7 @@ async function simpanData(){
   d.append('shodaqoh',getNum('shodaqoh'));
   try{
     const r=await(await fetch(API_URL,{method:'POST',body:d})).json();
-    toast(r.message||(r.success?'✅ Tersimpan':'❌ Gagal'));
+    toast(r.message||(r.success?'✅ Kasimpen':'❌ Gagal'));
     if(r.success!==false){
       resetForm(); // wis nyimpen konfirmasi asli saka server -- lagi resetForm/textContent tombol dibalekake (aman, dudu ngapusi)
       btns.forEach(b=>{b.disabled=false;});
@@ -865,7 +973,7 @@ async function simpanData(){
       btns.forEach((b,i)=>{b.disabled=false;b.textContent=oldTxt[i];});
     }
   }catch(e){
-    toast('❌ Gagal koneksi ke server');
+    toast('❌ Gagal nyambung server');
     btns.forEach((b,i)=>{b.disabled=false;b.textContent=oldTxt[i];});
   }
 }
@@ -889,14 +997,14 @@ async function loadAllData(){
 
 /* ===================== DASHBOARD ===================== */
 const CARD_DEFS=[
-  {key:'omzet',icon:'💰',label:'Omzet',cls:'card-teal'},
-  {key:'kulakan',icon:'🔵',label:'Kulakan',cls:'card-blue'},
-  {key:'ops',icon:'🔧',label:'Operasional',cls:'card-purple'},
-  {key:'jajan',icon:'🍚',label:'Jajan',cls:'card-orange'},
-  {key:'zakat',icon:'🕌',label:'Zakat',cls:'card-gold'},
-  {key:'shodaqoh',icon:'🤲',label:'Shodaqoh',cls:'card-pink'},
-  {key:'laba',icon:'📊',label:'Laba Bersih',cls:'card-green'},
-  {key:'setoran',icon:'🟡',label:'Setoran',cls:'card-red'}
+  {key:'omzet',icon:'wallet',label:'Omzet',cls:'card-teal'},
+  {key:'kulakan',icon:'cart',label:'Kulakan',cls:'card-blue'},
+  {key:'ops',icon:'wrench',label:'Operasional',cls:'card-purple'},
+  {key:'jajan',icon:'utensils',label:'Jajan',cls:'card-orange'},
+  {key:'zakat',icon:'moon',label:'Zakat',cls:'card-gold'},
+  {key:'shodaqoh',icon:'gift',label:'Shodaqoh',cls:'card-pink'},
+  {key:'laba',icon:'trendup',label:'Laba Bersih',cls:'card-green'},
+  {key:'setoran',icon:'banknote',label:'Setoran',cls:'card-red'}
 ];
 function aggregatePeriod(data){
   // posAgg per-kategori (transport/wifi/opkirim/dll): kanggo baris ANYAR (sasampunipun
@@ -925,20 +1033,83 @@ function aggregatePeriod(data){
 }
 function updateDashboard(){
   const filtered=filterData();
-  const today=getToday();const todayRow=allData.find(r=>tglStr(r)===today);
-  document.getElementById('floatingTotalVal').textContent=rupiah(todayRow?Number(todayRow[COL.totalOmzet]||0):0);
+  renderHeroSummary();
   renderTopInfo(filtered);
   renderStokMini();
   renderGalonSummary();
   renderStatCards(filtered);
+}
+function scrollToInputForm(){
+  const el=document.getElementById('inputPenjualanSection');
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function computeBusinessScore(data){
+  const a=aggregatePeriod(data);
+  const margin=a.omzet>0?(a.labaBersih/a.omzet*100):0;
+  const rasioOps=a.omzet>0?((a.jatahOps+a.jatahJajan)/a.omzet*100):0;
+  let skor=100;skor-=Math.max(0,25-margin);skor-=Math.max(0,rasioOps-15);skor=Math.max(5,Math.min(100,Math.round(skor)));
+  let kategori,warna;
+  if(skor>=80){kategori='Bisnis Sangat Sehat';warna='#22c55e';}
+  else if(skor>=60){kategori='Bisnis Stabil';warna='#eab308';}
+  else if(skor>=40){kategori='Perlu Perhatian';warna='#f97316';}
+  else {kategori='Risiko Tinggi';warna='#ef4444';}
+  return{skor,kategori,warna,margin,rasioOps,a};
+}
+function renderHeroSummary(){
+  const today=getToday();
+  const todayRow=allData.find(r=>tglStr(r)===today);
+  const yesterday=formatDateLocal(new Date(Date.now()-86400000));
+  const yestRow=allData.find(r=>tglStr(r)===yesterday);
+  const omzetToday=todayRow?Number(todayRow[COL.totalOmzet]||0):0;
+  const omzetYest=yestRow?Number(yestRow[COL.totalOmzet]||0):0;
+  document.getElementById('floatingTotalVal').textContent=rupiah(omzetToday);
+  const trendEl=document.getElementById('heroTrend');
+  if(yestRow&&omzetYest>0){
+    const pct=(omzetToday-omzetYest)/omzetYest*100;
+    const naik=pct>=0;
+    trendEl.style.display='inline-flex';
+    trendEl.className='hero-trend '+(pct===0?'flat':(naik?'up':'down'));
+    trendEl.innerHTML=icon(naik?'trendup':'trenddown',12)+' '+(naik?'+':'')+pct.toFixed(1)+'% timbang wingi';
+  }else{
+    trendEl.style.display='none';
+  }
+  const labaToday=todayRow?Number(todayRow[COL.labaBersih]||0):0;
+  const unitToday=todayRow?(Number(todayRow[COL.gas22]||0)+Number(todayRow[COL.gas23]||0)+Number(todayRow[COL.gasPink]||0)+Number(todayRow[COL.galon3k]||0)+Number(todayRow[COL.galon4k]||0)+Number(todayRow[COL.galon5k]||0)):0;
+  const pengeluaranToday=todayRow?Number(todayRow[COL.totalPengeluaran]||0):0;
+  document.getElementById('kpiRingkesHariIni').innerHTML=[
+    ['trendup','Laba Bersih',rupiah(labaToday)],
+    ['box','Unit Terjual',unitToday],
+    ['cart','Pengeluaran',rupiah(pengeluaranToday)]
+  ].map(([ic,l,v])=>`<div class="kpi-ringkes-card"><div class="kr-label">${icon(ic,11)} ${l}</div><div class="kr-value">${v}</div></div>`).join('');
+  const last7start=formatDateLocal(new Date(Date.now()-6*86400000));
+  const last7=allData.filter(r=>{const d=tglStr(r);return d&&d>=last7start&&d<=today;});
+  const {skor,kategori,warna}=computeBusinessScore(last7);
+  document.getElementById('statusBisnisMini').innerHTML=`
+    <div class="status-mini-ring" style="background:conic-gradient(${warna} ${skor*3.6}deg, var(--border) 0deg);"><b>${skor}</b></div>
+    <div class="status-mini-body">
+      <h4><span class="status-dot" style="background:${warna};"></span> ${kategori}</h4>
+      <p>Etungan saka margin & biaya operasional 7 dina pungkasan</p>
+      <span class="sm-link">Lihat Analisis →</span>
+    </div>`;
+  const alerts=[];
+  const stdInfo=stokSummary.GasStd,pinkInfo=stokSummary.GasPink;
+  if(stdInfo&&/SEGERA|Menipis/.test(stdInfo.status.label||''))alerts.push('Stok Gas Standar '+(stdInfo.status.label||'').replace(/[^\w\s!]/g,'').trim()+' — tinggal '+(stdInfo.stok||0)+' tabung.');
+  if(pinkInfo&&/SEGERA|Menipis/.test(pinkInfo.status.label||''))alerts.push('Stok Gas Pink '+(pinkInfo.status.label||'').replace(/[^\w\s!]/g,'').trim()+' — tinggal '+(pinkInfo.stok||0)+' tabung.');
+  PRODUK.forEach(p=>{const s=stokSummary[p.id];if(s&&/SEGERA|Menipis/.test(s.status.label||''))alerts.push('Stok '+p.nama+' menipis — cek kaca Stok.');});
+  const alertBox=document.getElementById('alertBanner');
+  if(alerts.length){
+    alertBox.innerHTML=`<div class="alert-card">${icon('alertcircle',20)}<div class="alert-text">${esc(alerts[0])}${alerts.length>1?' (+'+(alerts.length-1)+' liyane)':''}</div><button onclick="showMainPage('stokPage')">Catat Kulakan</button></div>`;
+  }else{
+    alertBox.innerHTML='';
+  }
 }
 function renderTopInfo(filtered){
   const a=aggregatePeriod(filtered);
   const hariUntung=filtered.filter(r=>Number(r[COL.labaBersih]||0)>=0).length;
   const hariRugi=filtered.length-hariUntung;
   const rataOmzet=filtered.length?a.omzet/filtered.length:0;
-  const items=[['teal','📋','Transaksi',filtered.length],['blue','📈','Rata2 Omzet/Hari',rupiah(rataOmzet)],['green','🟢','Hari Untung',hariUntung],['red','🔴','Hari Rugi',hariRugi]];
-  document.getElementById('topInfo').innerHTML=items.map(([c,i,l,v])=>`<div class="kpi-card kpi-${c}"><div class="kpi-icon">${i}</div><div class="kpi-body"><div class="kpi-label">${l}</div><div class="kpi-value">${v}</div></div></div>`).join('');
+  const items=[['teal','list','Transaksi',filtered.length],['blue','trendup','Rata2 Omzet/Dina',rupiah(rataOmzet)],['green','checkcircle','Dina Untung',hariUntung],['red','alertcircle','Dina Rugi',hariRugi]];
+  document.getElementById('topInfo').innerHTML=items.map(([c,i,l,v])=>`<div class="kpi-card kpi-${c}"><div class="kpi-icon">${icon(i,17)}</div><div class="kpi-body"><div class="kpi-label">${l}</div><div class="kpi-value">${v}</div></div></div>`).join('');
 }
 function renderStokMini(){
   const std=stokSummary.GasStd,pink=stokSummary.GasPink;
@@ -981,15 +1152,15 @@ function renderStatCards(filtered){
   document.getElementById('statContainer').innerHTML=CARD_DEFS.map(c=>{
     const v=vals[c.key];
     const badge=c.key==='laba'?`<span class="badge ${a.labaBersih>=0?'success':'danger'}">${a.labaBersih>=0?'▲ Untung':'▼ Rugi'}</span>`:'';
-    return `<div class="stat-card ${c.cls}" onclick="showCardDetail('${c.key}')"><span class="card-icon-bg">${c.icon}</span><div class="stat-title">${c.icon} ${c.label}</div><div class="stat-value">${rupiah(v.value)}</div><div class="stat-sub">${v.sub}</div>${badge}</div>`;
+    return `<div class="stat-card ${c.cls}" onclick="showCardDetail('${c.key}')"><span class="card-icon-bg">${icon(c.icon,40)}</span><div class="stat-title">${icon(c.icon,12)} ${c.label}</div><div class="stat-value">${rupiah(v.value)}</div><div class="stat-sub">${v.sub}</div>${badge}</div>`;
   }).join('');
 }
 
 /* ===================== POPUP DETAIL ===================== */
-function openPopup(title,sub,icon,html){
+function openPopup(title,sub,iconName,html){
   document.getElementById('popupTitle').textContent=title;
   document.getElementById('popupSubtitle').textContent=sub;
-  document.getElementById('popupIcon').textContent=icon;
+  document.getElementById('popupIcon').innerHTML=icon(iconName,20);
   document.getElementById('popupContent').innerHTML=html;
   document.getElementById('popupOverlay').classList.add('active');
 }
@@ -998,26 +1169,40 @@ function showCardDetail(key){
   const filtered=filterData();const a=aggregatePeriod(filtered);
   const row=(l,v)=>`<tr><td style="padding:6px 0;font-size:11px;">${l}</td><td style="padding:6px 0;text-align:right;font-weight:800;font-size:11px;">${rupiah(v)}</td></tr>`;
   let html='';
-  if(key==='omzet'){html=`<table style="width:100%;">${row('Omzet Gas',a.omzetGas)}${row('Omzet Galon',a.omzetGalon)}${row('Total Omzet',a.omzet)}</table>`;openPopup('Detail Omzet',`${filtered.length} transaksi`,'💰',html);}
-  else if(key==='ops'){html='<table style="width:100%;">'+POS.filter(p=>p.key!=='realJajan').map(p=>row(p.label+' (jatah/real)',a.posAgg[p.key].jatah)+`<tr><td style="font-size:9px;color:var(--gray);padding-bottom:6px;">Real: ${rupiah(a.posAgg[p.key].real)} · Sisa: ${rupiah(a.posAgg[p.key].sisa)}</td></tr>`).join('')+`</table>`;openPopup('Detail Operasional',`Total jatah ${rupiah(a.jatahOps)}`,'🔧',html);}
-  else if(key==='laba'){html=`<table style="width:100%;">${row('Total Omzet',a.omzet)}${row('- Kulakan (real)',a.realKulakan)}${row('- Operasional (real)',a.realOps+a.realJajan)}${row('- Pengeluaran Lain',sum(filtered,COL.pengeluaranLain))}${row('- Shodaqoh',a.shodaqoh)}${row('= Laba Bersih',a.labaBersih)}</table><p style="font-size:9px;color:var(--gray);margin-top:8px;">Zakat & Setoran adalah alokasi keuntungan, bukan pengurang laba.</p>`;openPopup('Detail Laba Bersih',a.labaBersih>=0?'Untung':'Rugi','📊',html);}
-  else{const map={kulakan:['Kulakan',a.jatahKulakan,a.realKulakan],jajan:['Jajan',a.jatahJajan,a.realJajan],zakat:['Zakat',a.jatahZakat,a.realZakat],setoran:['Setoran',a.jatahSetoran,a.realSetoran],shodaqoh:['Shodaqoh',a.shodaqoh,a.shodaqoh]};const[label,j,r]=map[key]||['-',0,0];html=`<table style="width:100%;">${row('Jatah',j)}${row('Realisasi',r)}${row('Sisa',j-r)}</table>`;openPopup('Detail '+label,`${filtered.length} transaksi`,'📌',html);}
+  if(key==='omzet'){html=`<table style="width:100%;">${row('Omzet Gas',a.omzetGas)}${row('Omzet Galon',a.omzetGalon)}${row('Total Omzet',a.omzet)}</table>`;openPopup('Detail Omzet',`${filtered.length} transaksi`,'wallet',html);}
+  else if(key==='ops'){html='<table style="width:100%;">'+POS.filter(p=>p.key!=='realJajan').map(p=>row(p.label+' (jatah/real)',a.posAgg[p.key].jatah)+`<tr><td style="font-size:9px;color:var(--gray);padding-bottom:6px;">Real: ${rupiah(a.posAgg[p.key].real)} · Sisa: ${rupiah(a.posAgg[p.key].sisa)}</td></tr>`).join('')+`</table>`;openPopup('Detail Operasional',`Total jatah ${rupiah(a.jatahOps)}`,'wrench',html);}
+  else if(key==='laba'){html=`<table style="width:100%;">${row('Total Omzet',a.omzet)}${row('- Kulakan (real)',a.realKulakan)}${row('- Operasional (real)',a.realOps+a.realJajan)}${row('- Pengeluaran Lain',sum(filtered,COL.pengeluaranLain))}${row('- Shodaqoh',a.shodaqoh)}${row('= Laba Bersih',a.labaBersih)}</table><p style="font-size:9px;color:var(--gray);margin-top:8px;">Zakat & Setoran adalah alokasi keuntungan, bukan pengurang laba.</p>`;openPopup('Detail Laba Bersih',a.labaBersih>=0?'Untung':'Rugi','trendup',html);}
+  else{const map={kulakan:['Kulakan',a.jatahKulakan,a.realKulakan],jajan:['Jajan',a.jatahJajan,a.realJajan],zakat:['Zakat',a.jatahZakat,a.realZakat],setoran:['Setoran',a.jatahSetoran,a.realSetoran],shodaqoh:['Shodaqoh',a.shodaqoh,a.shodaqoh]};const[label,j,r]=map[key]||['-',0,0];html=`<table style="width:100%;">${row('Jatah',j)}${row('Realisasi',r)}${row('Sisa',j-r)}</table>`;openPopup('Detail '+label,`${filtered.length} transaksi`,'list',html);}
 }
 
 /* ===================== REKAP ===================== */
 function renderTable(){
   const filtered=filterData(),tb=document.getElementById('rekapBody');if(!tb)return;
   document.getElementById('totalData').innerText=filtered.length;
-  if(!filtered.length){tb.innerHTML='<tr><td colspan="10"><div style="text-align:center;padding:40px;">📭 Belum ada data</div></td></tr>';return;}
+  if(!filtered.length){tb.innerHTML=`<div class="tx-empty">${icon('list',28)}<br>Durung ana data</div>`;return;}
   let html='';[...filtered].reverse().forEach(r=>{
-    html+=`<tr><td><b>${tglStr(r)}</b></td><td>22k:${r[COL.gas22]||0} 23k:${r[COL.gas23]||0}<br>Pink:${r[COL.gasPink]||0}</td><td>3k:${r[COL.galon3k]||0} 4k:${r[COL.galon4k]||0}<br>5k:${r[COL.galon5k]||0}</td><td>${rupiah(r[COL.totalOmzet])}</td><td>${rupiah(r[COL.jatahKulakan])}</td><td>${rupiah(r[COL.jatahOps])}</td><td>${rupiah(r[COL.jatahZakat])}</td><td>${rupiah(r[COL.jatahSetoran])}</td><td><span class="pill ${Number(r[COL.labaBersih])>=0?'pill-up':'pill-down'}">${rupiah(r[COL.labaBersih])}</span></td><td><span class="btn-edit" onclick="editFromRekap('${r[COL.id]}')">✏️</span><span class="btn-delete" onclick="hapusData('${r[COL.id]}')">🗑️</span></td></tr>`;
+    const gasBits=[['22k',r[COL.gas22]],['23k',r[COL.gas23]],['Pink',r[COL.gasPink]]].filter(([,v])=>Number(v)>0).map(([l,v])=>l+':'+v).join(' ');
+    const galonBits=[['3k',r[COL.galon3k]],['4k',r[COL.galon4k]],['5k',r[COL.galon5k]]].filter(([,v])=>Number(v)>0).map(([l,v])=>l+':'+v).join(' ');
+    const ringkes=[gasBits?('Gas '+gasBits):'',galonBits?('Galon '+galonBits):''].filter(Boolean).join(' · ')||'Tanpa penjualan gas/galon';
+    html+=`<div class="tx-card">
+      <div class="tx-card-head"><div class="tx-date">${tglStr(r)}</div><span class="pill ${Number(r[COL.labaBersih])>=0?'pill-up':'pill-down'}">${rupiah(r[COL.labaBersih])}</span></div>
+      <div class="tx-summary">${ringkes}</div>
+      <div class="tx-metrics">
+        <div><small>Omzet</small><b>${rupiah(r[COL.totalOmzet])}</b></div>
+        <div><small>Kulakan</small><b>${rupiah(r[COL.jatahKulakan])}</b></div>
+        <div><small>Ops</small><b>${rupiah(r[COL.jatahOps])}</b></div>
+        <div><small>Zakat</small><b>${rupiah(r[COL.jatahZakat])}</b></div>
+        <div><small>Setoran</small><b>${rupiah(r[COL.jatahSetoran])}</b></div>
+      </div>
+      <div class="tx-actions"><span class="btn-edit" onclick="editFromRekap('${r[COL.id]}')">${icon('edit',12)}</span><span class="btn-delete" onclick="hapusData('${r[COL.id]}')">${icon('trash',12)}</span></div>
+    </div>`;
   });
   tb.innerHTML=html;
 }
 async function exportPDF(){
   const bulan=prompt('Bulan (YYYY-MM)?',new Date().toISOString().slice(0,7));
   if(!bulan)return;
-  try{const r=await fetch(API_URL+'?action=exportPDF&token='+TOKEN+'&bulan='+encodeURIComponent(bulan));const text=await r.text();const win=window.open('','_blank');win.document.write('<pre>'+esc(text)+'</pre>');toast('✅ Laporan dibuka di tab baru');}catch(e){toast('❌ Gagal export');}
+  try{const r=await fetch(API_URL+'?action=exportPDF&token='+TOKEN+'&bulan='+encodeURIComponent(bulan));const text=await r.text();const win=window.open('','_blank');win.document.write('<pre>'+esc(text)+'</pre>');toast('✅ Laporan mbukak ing tab anyar');}catch(e){toast('❌ Gagal ekspor');}
 }
 
 /* ===================== SETORAN ===================== */
@@ -1026,13 +1211,13 @@ function renderSetoran(){
   let total=0,html='';
   [...allData].reverse().forEach(r=>{const tgl=tglStr(r),jumlah=Number(r[COL.realSetoran]||0),cat=r[COL.catSetoran]||'';if(jumlah>0){total+=jumlah;html+=`<tr><td>${tgl}</td><td>${rupiah(jumlah)}</td><td>${esc(cat)}</td></tr>`;}});
   document.getElementById('totalSetoranVal').textContent=rupiah(total);
-  tb.innerHTML=html||'<tr><td colspan="3"><div style="text-align:center;padding:40px;">📭 Belum ada setoran</div></td></tr>';
+  tb.innerHTML=html||'<tr><td colspan="3"><div style="text-align:center;padding:40px;">📭 Durung ana setoran</div></td></tr>';
 }
 
 /* ===================== KAS ADMIN ===================== */
 function renderKasAdmin(){
   const badgeEl=document.getElementById('kasAdminPeriodBadge');
-  if(badgeEl){const fl=document.getElementById('filterLabel');badgeEl.textContent=fl?fl.textContent:'Semua data';}
+  if(badgeEl){const fl=document.getElementById('filterLabel');badgeEl.textContent=fl?fl.textContent:'Kabeh data';}
   const filtered=filterData();const a=aggregatePeriod(filtered);
   let html='';
   // Cathetan: baris per-kategori (Transport/Wifi/dst) ing ngisor iki isih bisa mung ESTIMASI
@@ -1041,7 +1226,7 @@ function renderKasAdmin(){
   // sing dituduhake Admin mesthi cocog karo angka otoritatif (Rekap/PDF), ora katut mbleset
   // yen tarif operasional tau diowahi. Sisa saben baris ing tabel tetep informasi/estimasi.
   POS.forEach(p=>{const {jatah,real,sisa}=a.posAgg[p.key];html+=`<tr><td>${p.label}</td><td>${rupiah(jatah)}</td><td>${rupiah(real)}</td><td style="color:${sisa>=0?'var(--success)':'var(--danger)'};font-weight:700;">${rupiah(sisa)}</td></tr>`;});
-  const extras=[['🔵 Kulakan',a.jatahKulakan,a.realKulakan],['🕌 Zakat',a.jatahZakat,a.realZakat],['🟡 Setoran',a.jatahSetoran,a.realSetoran]];
+  const extras=[['Kulakan',a.jatahKulakan,a.realKulakan],['Zakat',a.jatahZakat,a.realZakat],['Setoran',a.jatahSetoran,a.realSetoran]];
   extras.forEach(([label,j,r])=>{const sVal=j-r;html+=`<tr><td>${label}</td><td>${rupiah(j)}</td><td>${rupiah(r)}</td><td style="color:${sVal>=0?'var(--success)':'var(--danger)'};font-weight:700;">${rupiah(sVal)}</td></tr>`;});
   document.getElementById('kasAdminBody').innerHTML=html;
   const opsSisaOtoritatif=(a.jatahOps+a.jatahJajan)-(a.realOps+a.realJajan);
@@ -1073,7 +1258,7 @@ async function loadTarif(){
 async function simpanTarif(){
   const d=new FormData();d.append('token',TOKEN);d.append('action','updateHarga');
   document.querySelectorAll('[id^="tarif_"]').forEach(el=>{d.append(el.id.replace('tarif_',''),el.value);});
-  try{const r=await(await fetch(API_URL,{method:'POST',body:d})).json();toast(r.message||'OK');}catch(e){toast('❌ Gagal simpan tarif');}
+  try{const r=await(await fetch(API_URL,{method:'POST',body:d})).json();toast(r.message||'OK');}catch(e){toast('❌ Gagal simpen tarif');}
 }
 
 /* ===================== KELOLA PRODUK (admin) ===================== */
@@ -1082,19 +1267,19 @@ function renderProdukKelola(){
   if(USER_ROLE!=='admin')return;
   produkDraft=PRODUK.map(p=>({...p}));
   const list=document.getElementById('produkKelolaList');if(!list)return;
-  list.innerHTML=produkDraft.length?'':'<p class="tiny muted">Durung ana produk. Pencet "➕ Tambah Produk" kagem miwiti.</p>';
+  list.innerHTML=produkDraft.length?'':'<p class="tiny muted">Durung ana produk. Pencet "Tambah Produk" kagem miwiti.</p>';
   drawProdukKelola();
 }
 function drawProdukKelola(){
   const list=document.getElementById('produkKelolaList');if(!list)return;
   list.innerHTML=produkDraft.map((p,i)=>`
     <div class="form-grid" style="border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px;">
-      <div class="input-group"><label>🏷️ Jeneng Produk</label><input type="text" value="${esc(p.nama)}" placeholder="mis. Air Mineral Kh-Q" oninput="produkDraft[${i}].nama=this.value">
+      <div class="input-group"><label>${icon('tag',13)} Jeneng Produk</label><input type="text" value="${esc(p.nama)}" placeholder="mis. Air Mineral Kh-Q" oninput="produkDraft[${i}].nama=this.value">
       </div>
-      <div class="input-group"><label>📦 Isi per Dus (pcs)</label><input type="number" min="1" value="${p.isiPerDus||1}" oninput="produkDraft[${i}].isiPerDus=Number(this.value)||1"></div>
-      <div class="input-group"><label>💰 Rega Jual /pcs</label><input type="number" min="0" value="${p.hargaJualPcs||''}" placeholder="0" oninput="produkDraft[${i}].hargaJualPcs=Number(this.value)||0"></div>
-      <div class="input-group"><label>🔵 Rega Beli /pcs</label><input type="number" min="0" value="${p.hargaBeliPcs||''}" placeholder="0" oninput="produkDraft[${i}].hargaBeliPcs=Number(this.value)||0"></div>
-      <button type="button" class="btn" style="grid-column:1/-1;background:var(--danger-bg,#fee2e2);color:var(--danger,#dc2626);" onclick="busakBarisProduk(${i})">🗑️ Busak Produk Iki</button>
+      <div class="input-group"><label>${icon('box',13)} Isi per Dus (pcs)</label><input type="number" min="1" value="${p.isiPerDus||1}" oninput="produkDraft[${i}].isiPerDus=Number(this.value)||1"></div>
+      <div class="input-group"><label>${icon('wallet',13)} Rega Jual /pcs</label><input type="number" min="0" value="${p.hargaJualPcs||''}" placeholder="0" oninput="produkDraft[${i}].hargaJualPcs=Number(this.value)||0"></div>
+      <div class="input-group"><label>${icon('cart',13)} Rega Beli /pcs</label><input type="number" min="0" value="${p.hargaBeliPcs||''}" placeholder="0" oninput="produkDraft[${i}].hargaBeliPcs=Number(this.value)||0"></div>
+      <button type="button" class="btn" style="grid-column:1/-1;background:var(--danger-bg,#fee2e2);color:var(--danger,#dc2626);" onclick="busakBarisProduk(${i})">${icon('trash',14)} Busak Produk Iki</button>
     </div>`).join('');
 }
 function tambahBarisProduk(){
@@ -1116,27 +1301,27 @@ async function simpanProduk(){
     const r=await(await fetch(API_URL,{method:'POST',body:d})).json();
     toast(r.message||'OK');
     if(r.success!==false){await syncProduk();renderProdukKelola();renderStokPage();}
-  }catch(e){toast('❌ Gagal simpan produk');}
+  }catch(e){toast('❌ Gagal simpen produk');}
 }
 
 /* ===================== STOK ===================== */
 async function inputStok(){
   const tgl=document.getElementById('tglStok')?.value;
-  if(!tgl){toast('⚠️ Tanggal wajib diisi');return;}
+  if(!tgl){toast('⚠️ Tanggal kudu diisi');return;}
   const d=new FormData();d.append('token',TOKEN);d.append('action','inputStok');d.append('tanggal',tgl);
   d.append('gasStdMasuk',getNum('gasStdMasuk'));d.append('gasPinkMasuk',getNum('gasPinkMasuk'));
   d.append('ketStok',document.getElementById('ketStok')?.value||'');
-  try{const r=await(await fetch(API_URL,{method:'POST',body:d})).json();toast(r.message||'OK');if(r.success!==false){['gasStdMasuk','gasPinkMasuk','ketStok'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});await loadAllData();}}catch(e){toast('❌ Gagal simpan stok');}
+  try{const r=await(await fetch(API_URL,{method:'POST',body:d})).json();toast(r.message||'OK');if(r.success!==false){['gasStdMasuk','gasPinkMasuk','ketStok'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});await loadAllData();}}catch(e){toast('❌ Gagal simpen stok');}
 }
 function renderStokPage(){
   const tgl=document.getElementById('tglStok');if(tgl&&!tgl.value)tgl.value=getToday();
   const tglP=document.getElementById('tglStokProduk');if(tglP&&!tglP.value)tglP.value=getToday();
   const grid=document.getElementById('stokPrediksiGrid');if(!grid)return;
-  const defs=[['GasStd','🔥 Gas 22K/23K'],['GasPink','💗 Gas Pink']];
-  grid.innerHTML=defs.map(([sku,label])=>{
+  const defs=[['GasStd','flame','Gas 22K/23K'],['GasPink','heart','Gas Pink']];
+  grid.innerHTML=defs.map(([sku,iconName,label])=>{
     const s=stokSummary[sku]||{stok:0,rataRataPerHari:0,prediksiHabisHari:null,status:{label:'-',color:'var(--gray)'}};
     const prediksiTxt=s.prediksiHabisHari===null?'-':(s.prediksiHabisHari<1?'< 1 hari':s.prediksiHabisHari.toFixed(1)+' hari');
-    return `<div class="stok-card2"><h4>${label}</h4><div class="big" style="color:${s.status.color};">${s.stok}</div><div style="font-size:9px;color:var(--gray);margin:6px 0;">tabung tersisa</div><div style="font-size:10px;">Rata2 terjual: <b>${s.rataRataPerHari}/hari</b></div><div style="font-size:10px;margin-top:2px;">Prediksi habis: <b>${prediksiTxt}</b></div><div style="margin-top:8px;font-size:10px;font-weight:800;color:${s.status.color};">${s.status.label}</div></div>`;
+    return `<div class="stok-card2"><h4>${icon(iconName,14)} ${label}</h4><div class="big" style="color:${s.status.color};">${s.stok}</div><div style="font-size:9px;color:var(--gray);margin:6px 0;">tabung tersisa</div><div style="font-size:10px;">Rata2 terjual: <b>${s.rataRataPerHari}/hari</b></div><div style="font-size:10px;margin-top:2px;">Prediksi habis: <b>${prediksiTxt}</b></div><div style="margin-top:8px;font-size:10px;font-weight:800;color:${s.status.color};">${s.status.label}</div></div>`;
   }).join('');
 
   const produkCard=document.getElementById('stokProdukCard');
@@ -1160,7 +1345,7 @@ function renderStokPage(){
 }
 async function inputStokProduk(){
   const tgl=document.getElementById('tglStokProduk')?.value;
-  if(!tgl){toast('⚠️ Tanggal wajib diisi');return;}
+  if(!tgl){toast('⚠️ Tanggal kudu diisi');return;}
   const produkId=document.getElementById('produkStokId')?.value;
   const satuan=document.getElementById('produkStokSatuan')?.value;
   const qtyInput=getNum('produkStokQty');
@@ -1174,7 +1359,7 @@ async function inputStokProduk(){
     const r=await(await fetch(API_URL,{method:'POST',body:d})).json();
     toast(r.message||'OK');
     if(r.success!==false){['produkStokQty','ketStokProduk'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});await loadAllData();}
-  }catch(e){toast('❌ Gagal simpan stok produk');}
+  }catch(e){toast('❌ Gagal simpen stok produk');}
 }
 let stokHistory=[];
 async function loadStokHistory(){
@@ -1191,7 +1376,7 @@ function renderStokHistory(){
   body.innerHTML=stokHistory.map(r=>{
     const prod=PRODUK.find(p=>p.id===r.sku);
     const skuLabel=prod?esc(prod.nama):r.sku;
-    const aksi=isAdmin?`<span class="btn-edit" onclick="editStokMasukUI('${r.id}',${r.qty})" title="Koreksi jumlah">✏️</span><span class="btn-delete" onclick="hapusStokMasukUI('${r.id}')" title="Busak">🗑️</span>`:'';
+    const aksi=isAdmin?`<span class="btn-edit" onclick="editStokMasukUI('${r.id}',${r.qty})" title="Koreksi jumlah">${icon('edit',12)}</span><span class="btn-delete" onclick="hapusStokMasukUI('${r.id}')" title="Busak">${icon('trash',12)}</span>`:'';
     return `<tr><td>${r.tanggal}</td><td>${skuLabel}</td><td>${r.qty}</td><td>${r.keterangan||''}</td>${isAdmin?`<td>${aksi}</td>`:''}</tr>`;
   }).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--gray);">Durung ana data</td></tr>';
 }
@@ -1226,12 +1411,12 @@ function renderCadangan(){
   body.innerHTML=(cadanganData.riwayat||[]).map(r=>{
     const tanda=r.jenis==='masuk'?'+':'−';
     const warna=r.jenis==='masuk'?'var(--success)':'var(--danger)';
-    return `<tr><td>${r.tanggal}</td><td style="color:${warna};font-weight:700;">${tanda} ${r.jenis}</td><td>${rupiah(r.jumlah)}</td><td>${r.keterangan||''}</td><td>${rupiah(r.saldoSetelah)}</td><td><span class="btn-delete" onclick="hapusCadanganUI('${r.id}')" title="Busak">🗑️</span></td></tr>`;
+    return `<tr><td>${r.tanggal}</td><td style="color:${warna};font-weight:700;">${tanda} ${r.jenis}</td><td>${rupiah(r.jumlah)}</td><td>${r.keterangan||''}</td><td>${rupiah(r.saldoSetelah)}</td><td><span class="btn-delete" onclick="hapusCadanganUI('${r.id}')" title="Busak">${icon('trash',12)}</span></td></tr>`;
   }).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--gray);">Durung ana data</td></tr>';
 }
 async function simpanCadangan(){
   const tgl=document.getElementById('tglCadangan')?.value;
-  if(!tgl){toast('⚠️ Tanggal wajib diisi');return;}
+  if(!tgl){toast('⚠️ Tanggal kudu diisi');return;}
   const d=new FormData();d.append('token',TOKEN);d.append('action','inputCadangan');d.append('tanggal',tgl);
   d.append('jenis',document.getElementById('jenisCadangan')?.value||'masuk');
   d.append('jumlah',getNum('jumlahCadangan'));
@@ -1240,7 +1425,7 @@ async function simpanCadangan(){
     const r=await(await fetch(API_URL,{method:'POST',body:d})).json();
     toast(r.message||'OK');
     if(r.success!==false){['jumlahCadangan','ketCadangan'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});await loadCadangan();}
-  }catch(e){toast('❌ Gagal simpan dana cadangan');}
+  }catch(e){toast('❌ Gagal simpen dana cadangan');}
 }
 async function hapusCadanganUI(id){
   if(!confirm('Busak catetan dana cadangan iki?'))return;
@@ -1258,10 +1443,10 @@ async function renderGrafik(){
   const filtered=[...filterData()].sort((a,b)=>tglStr(a).localeCompare(tglStr(b)));
   const cont=document.getElementById('chartsContainer');
   cont.innerHTML=`
-    <div class="chart-card large"><div class="chart-head"><h3>📈 Omzet Harian</h3></div><div class="chart-wrap"><canvas id="gOmzet"></canvas></div></div>
-    <div class="chart-card"><div class="chart-head"><h3>🔥 Gas vs 💧 Galon Terjual</h3></div><div class="chart-wrap"><canvas id="gUnit"></canvas></div></div>
-    <div class="chart-card"><div class="chart-head"><h3>📊 Laba Bersih Harian</h3></div><div class="chart-wrap"><canvas id="gLaba"></canvas></div></div>
-    <div class="chart-card large"><div class="chart-head"><h3>🏦 Jatah vs Real per Pos</h3></div><div class="chart-wrap"><canvas id="gPos"></canvas></div></div>`;
+    <div class="chart-card large"><div class="chart-head"><h3>${icon('trendup',14)} Omzet Harian</h3></div><div class="chart-wrap"><canvas id="gOmzet"></canvas></div></div>
+    <div class="chart-card"><div class="chart-head"><h3>${icon('flame',14)} Gas vs ${icon('droplet',14)} Galon Terjual</h3></div><div class="chart-wrap"><canvas id="gUnit"></canvas></div></div>
+    <div class="chart-card"><div class="chart-head"><h3>${icon('barchart',14)} Laba Bersih Harian</h3></div><div class="chart-wrap"><canvas id="gLaba"></canvas></div></div>
+    <div class="chart-card large"><div class="chart-head"><h3>${icon('bank',14)} Jatah vs Real per Pos</h3></div><div class="chart-wrap"><canvas id="gPos"></canvas></div></div>`;
   const labels=filtered.map(r=>tglStr(r).slice(5));
   chartInstances.push(new Chart(document.getElementById('gOmzet'),{type:'line',data:{labels,datasets:[{label:'Omzet',data:filtered.map(r=>Number(r[COL.totalOmzet]||0)),borderColor:'#0f766e',backgroundColor:'rgba(20,184,166,.15)',fill:true,tension:.35}]},options:{responsive:true,maintainAspectRatio:false}}));
   chartInstances.push(new Chart(document.getElementById('gUnit'),{type:'bar',data:{labels,datasets:[{label:'Gas',data:filtered.map(r=>Number(r[COL.gas22]||0)+Number(r[COL.gas23]||0)+Number(r[COL.gasPink]||0)),backgroundColor:'#0ea5e9'},{label:'Galon',data:filtered.map(r=>Number(r[COL.galon3k]||0)+Number(r[COL.galon4k]||0)+Number(r[COL.galon5k]||0)),backgroundColor:'#14b8a6'}]},options:{responsive:true,maintainAspectRatio:false}}));
@@ -1285,40 +1470,33 @@ function getAnalisisData(){
   return allData.filter(r=>{const dt=parseDate(r[COL.tanggal]);return dt&&dt>=batas;}).sort((a,b)=>tglStr(a).localeCompare(tglStr(b)));
 }
 async function renderAnalisis(){
-  const data=getAnalisisData();const a=aggregatePeriod(data);
-  const margin=a.omzet>0?(a.labaBersih/a.omzet*100):0;
-  const rasioOps=a.omzet>0?((a.jatahOps+a.jatahJajan)/a.omzet*100):0;
+  const data=getAnalisisData();
+  const {skor,kategori,warna,margin,rasioOps,a}=computeBusinessScore(data);
   document.getElementById('summaryGrid').innerHTML=[
     ['Total Omzet',rupiah(a.omzet),`${data.length} transaksi`],
     ['Laba Bersih',rupiah(a.labaBersih),margin.toFixed(1)+'% margin'],
-    ['Rata2 Omzet/Hari',rupiah(data.length?a.omzet/data.length:0),'per hari transaksi'],
-    ['Total Unit Terjual',(sum(data,COL.gas22)+sum(data,COL.gas23)+sum(data,COL.gasPink)+sum(data,COL.galon3k)+sum(data,COL.galon4k)+sum(data,COL.galon5k)),'gas + galon']
+    ['Rata2 Omzet/Dina',rupiah(data.length?a.omzet/data.length:0),'per dina transaksi'],
+    ['Total Unit Didol',(sum(data,COL.gas22)+sum(data,COL.gas23)+sum(data,COL.gasPink)+sum(data,COL.galon3k)+sum(data,COL.galon4k)+sum(data,COL.galon5k)),'gas + galon']
   ].map(([l,v,sub])=>`<div class="kpi-card-v2"><div class="kpi-label-v2">${l}</div><div class="kpi-value-v2">${v}</div><div class="kpi-sub-v2">${sub}</div></div>`).join('');
 
-  let skor=100;skor-=Math.max(0,25-margin);skor-=Math.max(0,rasioOps-15);skor=Math.max(5,Math.min(100,Math.round(skor)));
-  let kategori,warna;
-  if(skor>=80){kategori='🟢 Bisnis Sangat Sehat';warna='#22c55e';}
-  else if(skor>=60){kategori='🟡 Bisnis Stabil';warna='#eab308';}
-  else if(skor>=40){kategori='🟠 Perlu Perhatian';warna='#f97316';}
-  else {kategori='🔴 Risiko Tinggi';warna='#ef4444';}
   document.getElementById('businessScore').innerHTML=`
     <div class="score-grid-v2">
       <div class="score-ring-v2" style="background:conic-gradient(${warna} ${skor*3.6}deg, rgba(255,255,255,.08) 0deg);"><div class="score-content-v2"><div class="score-number-v2">${skor}</div><div class="score-text-v2">Skor Kesehatan</div></div></div>
-      <div class="score-info-v2"><h2>${kategori}</h2><p>Margin profit ${margin.toFixed(1)}% & rasio operasional ${rasioOps.toFixed(1)}% dari omzet.</p>
+      <div class="score-info-v2"><h2><span class="status-dot" style="background:${warna};display:inline-block;margin-right:4px;"></span>${kategori}</h2><p>Margin profit ${margin.toFixed(1)}% & rasio operasional ${rasioOps.toFixed(1)}% dari omzet. Skor iki etungan sederhana, dudu penilaian resmi — tetep gunakake pertimbangan dhewe.</p>
         <div class="metric-row"><div class="metric-mini"><small>Margin</small><h4>${margin.toFixed(1)}%</h4></div><div class="metric-mini"><small>Rasio Ops</small><h4>${rasioOps.toFixed(1)}%</h4></div></div>
       </div>
     </div>`;
 
   const stdInfo=stokSummary.GasStd||{status:{label:'-'}},pinkInfo=stokSummary.GasPink||{status:{label:'-'}};
   document.getElementById('insightGrid').innerHTML=[
-    {icon:'🔥',bg:'#0ea5e9',label:'Stok Gas Standar',val:stdInfo.status.label,sub:(stdInfo.stok||0)+' tabung tersisa'},
-    {icon:'💗',bg:'#db2777',label:'Stok Gas Pink',val:pinkInfo.status.label,sub:(pinkInfo.stok||0)+' tabung tersisa'},
-    {icon:'💧',bg:'#14b8a6',label:'Total Galon Terjual',val:(sum(data,COL.galon3k)+sum(data,COL.galon4k)+sum(data,COL.galon5k))+' galon',sub:'periode terpilih'},
-    {icon:'🕌',bg:'#eab308',label:'Zakat Terkumpul',val:rupiah(a.jatahZakat),sub:'2.5% dari (omzet-kulakan)'}
-  ].map(c=>`<div class="insight-card-v2"><div class="insight-head-v2"><div class="insight-icon-v2" style="background:${c.bg}22;color:${c.bg};">${c.icon}</div><div style="font-size:10px;color:#94a3b8;font-weight:700;">${c.label}</div></div><div class="insight-big-v2">${c.val}</div><div class="insight-sub-v2">${c.sub}</div></div>`).join('');
+    {icon:'flame',bg:'#0ea5e9',label:'Stok Gas Standar',val:stdInfo.status.label,sub:(stdInfo.stok||0)+' tabung kari'},
+    {icon:'heart',bg:'#db2777',label:'Stok Gas Pink',val:pinkInfo.status.label,sub:(pinkInfo.stok||0)+' tabung kari'},
+    {icon:'droplet',bg:'#14b8a6',label:'Total Galon Didol',val:(sum(data,COL.galon3k)+sum(data,COL.galon4k)+sum(data,COL.galon5k))+' galon',sub:'periode sing dipilih'},
+    {icon:'moon',bg:'#eab308',label:'Zakat Kekumpul',val:rupiah(a.jatahZakat),sub:'2.5% saka (omzet-kulakan)'}
+  ].map(c=>`<div class="insight-card-v2"><div class="insight-head-v2"><div class="insight-icon-v2" style="background:${c.bg}22;color:${c.bg};">${icon(c.icon,18)}</div><div style="font-size:10px;color:#94a3b8;font-weight:700;">${c.label}</div></div><div class="insight-big-v2">${c.val}</div><div class="insight-sub-v2">${c.sub}</div></div>`).join('');
 
   const anomali=data.filter(r=>Number(r[COL.labaBersih]||0)<0);
-  document.getElementById('anomalyAlert').innerHTML=anomali.length?`<div class="anomaly-alert">⚠️ Ditemukan ${anomali.length} hari rugi pada periode ini — cek Rekap Transaksi untuk detail.</div>`:'';
+  document.getElementById('anomalyAlert').innerHTML=anomali.length?`<div class="anomaly-alert">⚠️ Ana ${anomali.length} dina rugi ing periode iki — deleng Rekap Transaksi kanggo detail.</div>`:'';
 
   if(!window.Chart)await loadChartJs();
   if(currentPage!=='analisisPage')return;
@@ -1334,7 +1512,7 @@ async function renderAnalisis(){
   const forecastActual=[...recent];
   for(let i=1;i<=7;i++){forecastLabels.push('+'+i+'h');forecastActual.push(null);}
   const forecastLine=new Array(recent.length-1).fill(null).concat(new Array(8).fill(rataForecast));
-  chartForecast=new Chart(document.getElementById('cForecast'),{type:'line',data:{labels:forecastLabels,datasets:[{label:'Aktual',data:forecastActual,borderColor:'#a78bfa',tension:.3},{label:'Forecast (rata2 7 hari)',data:forecastLine,borderColor:'#f472b6',borderDash:[6,4],tension:0}]},options:{responsive:true,maintainAspectRatio:false}});
+  chartForecast=new Chart(document.getElementById('cForecast'),{type:'line',data:{labels:forecastLabels,datasets:[{label:'Aktual',data:forecastActual,borderColor:'#a78bfa',tension:.3},{label:'Prediksi (rata2 7 dina)',data:forecastLine,borderColor:'#f472b6',borderDash:[6,4],tension:0}]},options:{responsive:true,maintainAspectRatio:false}});
 }
 
 /* ===================== DARK MODE ===================== */
@@ -1342,9 +1520,9 @@ function toggleDarkMode(){
   const html=document.documentElement;
   const now=html.getAttribute('data-theme')==='dark'?'light':'dark';
   html.setAttribute('data-theme',now);localStorage.setItem('gals_theme',now);
-  document.getElementById('darkBtn').textContent=now==='dark'?'☀️':'🌙';
+  document.getElementById('darkBtn').innerHTML=icon(now==='dark'?'sun':'moon',16);
 }
-(function initTheme(){const t=localStorage.getItem('gals_theme');if(t){document.documentElement.setAttribute('data-theme',t);}window.addEventListener('DOMContentLoaded',()=>{document.getElementById('darkBtn').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';});})();
+(function initTheme(){const t=localStorage.getItem('gals_theme');if(t){document.documentElement.setAttribute('data-theme',t);}window.addEventListener('DOMContentLoaded',()=>{document.getElementById('darkBtn').innerHTML=icon(document.documentElement.getAttribute('data-theme')==='dark'?'sun':'moon',16);});})();
 
 /* ===================== LOGIN / SESSION ===================== */
 async function startApp(){
@@ -1363,7 +1541,7 @@ async function startApp(){
 async function submitLogin(){
   const pin=document.getElementById('loginPin').value.trim();
   const errEl=document.getElementById('loginErr');
-  if(!pin){errEl.textContent='PIN wajib diisi';return;}
+  if(!pin){errEl.textContent='PIN kudu diisi';return;}
   const btn=document.getElementById('loginBtn');
   btn.disabled=true;btn.textContent='Mriksa...';
   try{
