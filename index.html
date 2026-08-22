@@ -1028,6 +1028,7 @@ function aggregatePeriod(data){
     jatahZakat:sum(data,COL.jatahZakat),realZakat:sum(data,COL.realZakat),
     jatahSetoran:sum(data,COL.jatahSetoran),realSetoran:sum(data,COL.realSetoran),
     shodaqoh:sum(data,COL.shodaqoh),labaBersih:sum(data,COL.labaBersih),
+    pemasukanLain:sum(data,COL.pemasukanLain),modalPemasukanLain:sum(data,COL.modalPemasukanLain),pengeluaranLain:sum(data,COL.pengeluaranLain),
     posAgg,count:data.length
   };
 }
@@ -1228,6 +1229,9 @@ function renderKasAdmin(){
   POS.forEach(p=>{const {jatah,real,sisa}=a.posAgg[p.key];html+=`<tr><td>${p.label}</td><td>${rupiah(jatah)}</td><td>${rupiah(real)}</td><td style="color:${sisa>=0?'var(--success)':'var(--danger)'};font-weight:700;">${rupiah(sisa)}</td></tr>`;});
   const extras=[['Kulakan',a.jatahKulakan,a.realKulakan],['Zakat',a.jatahZakat,a.realZakat],['Setoran',a.jatahSetoran,a.realSetoran]];
   extras.forEach(([label,j,r])=>{const sVal=j-r;html+=`<tr><td>${label}</td><td>${rupiah(j)}</td><td>${rupiah(r)}</td><td style="color:${sVal>=0?'var(--success)':'var(--danger)'};font-weight:700;">${rupiah(sVal)}</td></tr>`;});
+  const untungPemasukanLain=a.pemasukanLain-a.modalPemasukanLain;
+  html+=`<tr><td>Pemasukan Lain</td><td>${rupiah(a.modalPemasukanLain)}</td><td>${rupiah(a.pemasukanLain)}</td><td style="color:${untungPemasukanLain>=0?'var(--success)':'var(--danger)'};font-weight:700;">${rupiah(untungPemasukanLain)}</td></tr>`;
+  html+=`<tr><td>Pengeluaran Lain</td><td>-</td><td>${rupiah(a.pengeluaranLain)}</td><td style="color:var(--danger);font-weight:700;">${rupiah(-a.pengeluaranLain)}</td></tr>`;
   document.getElementById('kasAdminBody').innerHTML=html;
   const opsSisaOtoritatif=(a.jatahOps+a.jatahJajan)-(a.realOps+a.realJajan);
   const totalSisa=opsSisaOtoritatif+(a.jatahKulakan-a.realKulakan)+(a.jatahZakat-a.realZakat)+(a.jatahSetoran-a.realSetoran);
