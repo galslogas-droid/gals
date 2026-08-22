@@ -742,12 +742,15 @@ function hitungFormula(d){
   let jatahOps=0;POS.forEach(p=>{jatahOps+=p.jatahFn(totalGas,totalGalon);});
   const shodaqoh=d.shodaqoh||0;
   const jatahZakat=Math.max(0,Math.round((totalOmzet-jatahKulakan)*2.5/100));
-  const jatahSetoran=Math.max(0,totalOmzet-jatahKulakan-jatahOps-jatahZakat-shodaqoh);
+  // Untung Pemasukan Lain (Pemasukan-Modal) ditokake saka Jatah Setoran, mlebu Dana
+  // Cadangan otomatis (backend) - dudu Setoran. Mirror Code.gs hitungFormula(), 22 Aug 2026.
+  const untungPemasukanLain=Math.max(0,(d.pemasukanLain||0)-(d.modalPemasukanLain||0));
+  const jatahSetoran=Math.max(0,totalOmzet-jatahKulakan-jatahOps-jatahZakat-shodaqoh-untungPemasukanLain);
   let totalRealOps=0;POS.forEach(p=>{totalRealOps+=(d[p.key]||0);});
   const realKulakan=d.realKulakan||0,pengeluaranLain=d.pengeluaranLain||0;
   const totalPengeluaran=totalRealOps+realKulakan+pengeluaranLain+shodaqoh;
   const labaBersih=totalOmzet-totalPengeluaran;
-  return{totalGas,totalGalon,omzetGas,omzetGalon,totalOmzet,jatahKulakan,jatahOps,jatahZakat,jatahSetoran,totalRealOps,totalPengeluaran,labaBersih};
+  return{totalGas,totalGalon,omzetGas,omzetGalon,totalOmzet,jatahKulakan,jatahOps,jatahZakat,jatahSetoran,untungPemasukanLain,totalRealOps,totalPengeluaran,labaBersih};
 }
 function readFormAsData(){
   const d={gas22:getNum('gas22'),gas23:getNum('gas23'),gasPink:getNum('gasPink'),galon3k:getNum('galon3k'),galon4k:getNum('galon4k'),galon5k:getNum('galon5k'),pemasukanLain:getNum('pemasukanLain'),modalPemasukanLain:getNum('modalPemasukanLain'),shodaqoh:getNum('shodaqoh'),realKulakan:getNum('realKulakan'),pengeluaranLain:getNum('pengeluaranLain'),produkTerjual:readProdukTerjual()};
@@ -761,7 +764,8 @@ function updatePreview(){
   if(box)box.innerHTML=[
     ['Total Omzet',f.totalOmzet],['Jatah Kulakan',f.jatahKulakan],['Jatah Operasional',f.jatahOps],
     ['Jatah Zakat (2.5%)',f.jatahZakat],['Jatah Setoran',f.jatahSetoran],['Estimasi Laba',f.labaBersih]
-  ].map(([label,val])=>`<div class="p-item"><small>${label}</small><div style="color:${label==='Estimasi Laba'?(val>=0?'var(--success)':'var(--danger)'):'var(--dark)'}">${rupiah(val)}</div></div>`).join('');
+  ].map(([label,val])=>`<div class="p-item"><small>${label}</small><div style="color:${label==='Estimasi Laba'?(val>=0?'var(--success)':'var(--danger)'):'var(--dark)'}">${rupiah(val)}</div></div>`).join('')
+  +(f.untungPemasukanLain>0?`<p class="tiny muted" style="grid-column:1/-1;margin:6px 0 0">Untung Pemasukan Lain ${rupiah(f.untungPemasukanLain)} bakal otomatis mlebu Dana Cadangan (dudu Jatah Setoran).</p>`:'');
   const ssO=document.getElementById('ssOmzet'),ssL=document.getElementById('ssLaba');
   if(ssO)ssO.textContent=rupiah(f.totalOmzet);
   if(ssL){ssL.textContent=rupiah(f.labaBersih);ssL.style.color=f.labaBersih>=0?'#4ade80':'#f87171';}
@@ -1240,12 +1244,12 @@ function renderKasAdmin(){
   // ndhuwur - ora ana "jatah" (anggaran) kagem telu iki, dadi yen dilebokke kolom Sisa
   // mesthi katon abang/minus senadyan normal-normal wae (ora ana masalah). Ditampilake
   // dhewe minangka info total wae, dudu perbandingan jatah-vs-real.
-  const untungPemasukanLain=a.pemasukanLain-a.modalPemasukanLain;
+  const untungPemasukanLain=Math.max(0,a.pemasukanLain-a.modalPemasukanLain);
   document.getElementById('kasExtraInfo').innerHTML=`
-    <div class="kas-extra-row"><span>Pemasukan Lain</span><b style="color:${untungPemasukanLain>=0?'var(--success)':'var(--danger)'}">+${rupiah(a.pemasukanLain)}${a.modalPemasukanLain?' (modal '+rupiah(a.modalPemasukanLain)+')':''}</b></div>
+    <div class="kas-extra-row"><span>Pemasukan Lain</span><b class="kas-extra-neutral">${rupiah(a.pemasukanLain)}${a.modalPemasukanLain?' (modal '+rupiah(a.modalPemasukanLain)+')':''}</b></div>
     <div class="kas-extra-row"><span>Pengeluaran Lain</span><b class="kas-extra-neutral">${rupiah(a.pengeluaranLain)}</b></div>
     <div class="kas-extra-row"><span>Shodaqoh</span><b class="kas-extra-neutral">${rupiah(a.shodaqoh)}</b></div>
-    <p class="tiny muted" style="margin:8px 0 0">Telu iki wis melu kepotong/kelebu ing itungan Laba Bersih, mung ora ana "jatah/anggaran"-e dhewe kaya pos liyane ing ndhuwur — mula ditampilake kapisah, dudu abang/ijo minangka "sisa".</p>`;
+    <p class="tiny muted" style="margin:8px 0 0">Iki DUDU dhuwit lepas ing tangan — Pemasukan Lain wis kepotong Modal (mlebu Jatah Kulakan) lan untunge (${rupiah(untungPemasukanLain)}) wis otomatis mlebu saldo Dana Cadangan ing ngisor; Pengeluaran Lain/Shodaqoh wis kepotong Laba Bersih. Telu-telune mung katon minangka riwayat, ora nambah "Sisa" ing ndhuwur.</p>`;
   const opsSisaOtoritatif=(a.jatahOps+a.jatahJajan)-(a.realOps+a.realJajan);
   const totalSisa=opsSisaOtoritatif+(a.jatahKulakan-a.realKulakan)+(a.jatahZakat-a.realZakat)+(a.jatahSetoran-a.realSetoran);
   document.getElementById('totalKasAdmin').textContent='Total Sisa: '+rupiah(totalSisa);
