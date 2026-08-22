@@ -745,9 +745,11 @@ function hitungFormula(d){
   // Untung Pemasukan Lain (Pemasukan-Modal) ditokake saka Jatah Setoran, mlebu Dana
   // Cadangan otomatis (backend) - dudu Setoran. Mirror Code.gs hitungFormula(), 22 Aug 2026.
   const untungPemasukanLain=Math.max(0,(d.pemasukanLain||0)-(d.modalPemasukanLain||0));
-  const jatahSetoran=Math.max(0,totalOmzet-jatahKulakan-jatahOps-jatahZakat-shodaqoh-untungPemasukanLain);
+  // Pengeluaran Lain uga dipotong langsung saka Jatah Setoran (disamakke karo Shodaqoh), 22 Aug 2026.
+  const pengeluaranLain=d.pengeluaranLain||0;
+  const jatahSetoran=Math.max(0,totalOmzet-jatahKulakan-jatahOps-jatahZakat-shodaqoh-untungPemasukanLain-pengeluaranLain);
   let totalRealOps=0;POS.forEach(p=>{totalRealOps+=(d[p.key]||0);});
-  const realKulakan=d.realKulakan||0,pengeluaranLain=d.pengeluaranLain||0;
+  const realKulakan=d.realKulakan||0;
   const totalPengeluaran=totalRealOps+realKulakan+pengeluaranLain+shodaqoh;
   const labaBersih=totalOmzet-totalPengeluaran;
   return{totalGas,totalGalon,omzetGas,omzetGalon,totalOmzet,jatahKulakan,jatahOps,jatahZakat,jatahSetoran,untungPemasukanLain,totalRealOps,totalPengeluaran,labaBersih};
@@ -1249,7 +1251,7 @@ function renderKasAdmin(){
     <div class="kas-extra-row"><span>Pemasukan Lain</span><b class="kas-extra-neutral">${rupiah(a.pemasukanLain)}${a.modalPemasukanLain?' (modal '+rupiah(a.modalPemasukanLain)+')':''}</b></div>
     <div class="kas-extra-row"><span>Pengeluaran Lain</span><b class="kas-extra-neutral">${rupiah(a.pengeluaranLain)}</b></div>
     <div class="kas-extra-row"><span>Shodaqoh</span><b class="kas-extra-neutral">${rupiah(a.shodaqoh)}</b></div>
-    <p class="tiny muted" style="margin:8px 0 0">Iki DUDU dhuwit lepas ing tangan — Pemasukan Lain wis kepotong Modal (mlebu Jatah Kulakan) lan untunge (${rupiah(untungPemasukanLain)}) wis otomatis mlebu saldo Dana Cadangan ing ngisor; Pengeluaran Lain/Shodaqoh wis kepotong Laba Bersih. Telu-telune mung katon minangka riwayat, ora nambah "Sisa" ing ndhuwur.</p>`;
+    <p class="tiny muted" style="margin:8px 0 0">Iki DUDU dhuwit lepas ing tangan — Pemasukan Lain wis kepotong Modal (mlebu Jatah Kulakan) lan untunge (${rupiah(untungPemasukanLain)}) wis otomatis mlebu saldo Dana Cadangan ing ngisor; Pengeluaran Lain/Shodaqoh wis kepotong langsung saka Jatah Setoran (baris "Setoran" ing tabel ndhuwur wis nyakup iki). Telu-telune mung katon minangka riwayat ing kene, ora nambah "Sisa" dhewe.</p>`;
   const opsSisaOtoritatif=(a.jatahOps+a.jatahJajan)-(a.realOps+a.realJajan);
   const totalSisa=opsSisaOtoritatif+(a.jatahKulakan-a.realKulakan)+(a.jatahZakat-a.realZakat)+(a.jatahSetoran-a.realSetoran);
   document.getElementById('totalKasAdmin').textContent='Total Sisa: '+rupiah(totalSisa);
